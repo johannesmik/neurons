@@ -1,0 +1,30 @@
+Occurred issues
+- How to represent the time of the spiketrains
+  In relative or absolute times, or in timesteps (determined by delta_t)
+
+- Connected neurons could be simply determined by the weight matrix.
+  Neurons with weight 0 are not connected, else they are connected
+
+- I guess weights are not symmetric.
+  So neuron w(AB) != w(BA)
+
+- There is the need for some initial spiketrains in some neurons.
+  Or else no neuron would ever fire.
+  How is this handled in nature? Are there some 'random shooting' neurons?
+
+- What value should the kernel return in case of a spike?
+  Idea: a tuple (True, 0) iff spike, (False, value) else.
+
+- How does the postsynaptic current epsilon look like?
+
+- In guide.pdf to which neuron does the current belong to?
+  I think it is neuron i, so maybe call it epsilon_i?
+
+- We did not model the delay in the membrane yet?
+
+- I think a continuous, timestep like, simulation might be quite handy.
+  Because a spike of neuron i at time t, is based on (potentially) all spikes of
+  a connected neuron j previous to time t. Those spikes might be again
+  based on spikes of neuron i. This dependence issue could be solved with timestep simulation.
+
+- I put 'potentially' in parentheses, because
