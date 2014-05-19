@@ -7,16 +7,19 @@ from pylab import *
 # Global configs
 T = 500                         # Simulation time in ms
 dt = 1                          # Simulation timesteps in ms
-t_if = -100                     # Last spike at neuron i (the neuron we look at)
-t_jf = [50, 60, 70, 80, 90, 100, 110]    # Spikes at neuron j
-t_current = 0.00007             # Time of current (t_s)
-t_membran = 100                 # Membran-time-constant (t_m)
+t_if = -1000                    # Last spike at neuron i (the neuron we look at)
+t_jf = [50, 60, 70, 80,
+        200, 205, 210,
+        250, 255, 260, 265, 270,
+        400]                    # Spiketrain at neuron j
+t_current = 0.3                 # Time of current (t_s)
+t_membran = 20                  # Membran-time-constant (t_m)
 w = 1                           # Weight connecting neuron i and j
 time = np.arange(0, T+dt, dt)   # Timeline
 V = np.zeros(len(time))         # Voltage at the Neuron (over sim. time)
-nu_reset = 0.0005               # Reset of potential (nu_0)
-delta = 5                       # Critical voltage
-spike = 100                     # Spike delta
+nu_reset = 5                    # Reset of potential (nu_0)
+delta = 2                       # Critical voltage
+spike = 10                      # Spike delta
 
 def nu(s):
     if s == 0:
@@ -49,5 +52,5 @@ plot(time, V)
 title('Simplified Spike Response Model SRM0')
 ylabel('Membrane Potential (V)')
 xlabel('Time (msec)')
-ylim([-80,100])
+ylim([-5,15])
 show()
