@@ -21,7 +21,7 @@ nu_reset = 5                    # Reset of potential (nu_0)
 delta = 2                       # Critical voltage
 spike = 10                      # Spike delta
 
-def nu(s):
+def eta(s):
     if s == 0:
         return spike # Spike delta
     else:
