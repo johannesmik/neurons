@@ -7,7 +7,7 @@ from pylab import *
 # Global configs
 T = 500                         # Simulation time in ms
 dt = 1                          # Simulation timesteps in ms
-t_if = -1000                    # Last spike at neuron i (the neuron we look at)
+t_if = 0                    # Last spike at neuron i (the neuron we look at)
 t_jf = [50, 60, 70, 80,
         200, 205, 210,
         250, 255, 260, 265, 270,
@@ -21,7 +21,7 @@ nu_reset = 5                    # Reset of potential (nu_0)
 delta = 2                       # Critical voltage
 spike = 10                      # Spike delta
 
-def nu(s):
+def eta(s):
     if s == 0:
         return spike # Spike delta
     else:
