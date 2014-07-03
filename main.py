@@ -7,7 +7,7 @@ from pylab import *
 # Global configs
 T = 500                         # Simulation time in ms
 dt = 1                          # Simulation timesteps in ms
-t_if = 0                    # Last spike at neuron i (the neuron we look at)
+t_if = 0                        # Last spike at neuron i (the neuron we look at)
 t_jf = [50, 60, 70, 80,
         200, 205, 210,
         250, 255, 260, 265, 270,
@@ -40,7 +40,7 @@ for i, t in enumerate(time):
         if t_f < t:
             input_current += eps(t-t_f)
     # We only look at the last spikes here
-    u = nu(t-t_if) + w * input_current
+    u = eta(t-t_if) + w * input_current
     if u > delta:
         t_if = t
         u += spike
