@@ -18,20 +18,25 @@ def eta(s, nu_reset=5, t_membran=20):
         return - nu_reset*np.exp(-s/t_membran)
 
 def eps(s, t_current=0.3, t_membran=20):
-    ''' '''
+    ''' TODO explain '''
     return (1/(1-t_current/t_membran))*(np.exp(-s/t_membran) - np.exp(-s/t_current))
 
-class PoissonNeuron(object):
-    ''' Neuron, homogenous Poisson '''
-    def __init__(self, rate):
 
+class Neuron(object):
+    def __init__(self):
         self.current = []
-        self.rate = rate
-        self.spikes = np.array([-50]) # TODO: remove
+        self.spikes = np.array([-50])
         self.connected_neurons = []
 
     def connect(self, weight, neuron):
+        # Multiple connections to the same neuron possible
         self.connected_neurons.append((weight, neuron))
+
+class PoissonNeuron(Neuron):
+    ''' Neuron, homogenous Poisson '''
+    def __init__(self, rate):
+        super(PoissonNeuron, self).__init__()
+        self.rate = rate
 
     def spike(self, t):
         ''' Random spike based on Poisson process'''
@@ -52,20 +57,12 @@ class PoissonNeuron(object):
         else:
             return False
 
-class SpikingNeuron(object):
+class SpikingNeuron(Neuron):
     ''' Neuron, spikes based on a input spiketrain '''
     def __init__(self, nu_reset=5, delta=2):
-
+        super(SpikingNeuron, self).__init__()
         self.nu_reset = nu_reset
         self.delta = delta
-
-        self.current = []
-        self.spikes = np.array([-50])  # Having all t_f inside TODO: remove
-        self.connected_neurons = []
-
-    def connect(self, weight, neuron):
-        # TODO detect double entries
-        self.connected_neurons.append((weight,neuron))
 
     def spike(self, t):
         '''
