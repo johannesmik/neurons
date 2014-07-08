@@ -4,7 +4,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-N = 100     # number of neurons
 dt = 1      # time-step in ms
 T = 500    # total simulation time in ms
 p = 100     # 'discrete' spiketrains taken into account
@@ -18,15 +17,26 @@ def eta(s, nu_reset=5, t_membran=20):
         return - nu_reset*np.exp(-s/t_membran)
 
 def eps(s, t_current=0.3, t_membran=20):
-    ''' TODO explain '''
+    ''' TODO explain this function '''
     return (1/(1-t_current/t_membran))*(np.exp(-s/t_membran) - np.exp(-s/t_current))
-
 
 class Neuron(object):
     def __init__(self):
         self.current = []
         self.spikes = np.array([-50])
         self.connected_neurons = []
+
+    def calculate_current(self, t):
+        ''' Return the incoming current for time t '''
+        input_current = 0
+        for weight, neuron in self.connected_neurons:
+            for t_f in neuron.spikes[t-100*dt < neuron.spikes]:
+                input_current += weight * eps(t - t_f)
+
+        # Accord for refractory time
+        t_i = max(self.spikes) # Last spike
+        input_current += eta(t-t_i)
+        return input_current
 
     def connect(self, weight, neuron):
         # Multiple connections to the same neuron possible
@@ -39,18 +49,13 @@ class PoissonNeuron(Neuron):
         self.rate = rate
 
     def spike(self, t):
-        ''' Random spike based on Poisson process'''
+        ''' Random spike based on homog. Poisson process'''
 
-        # Calculate the input from other neurons
-        input_current = 0
-        for weight, neuron in self.connected_neurons:
-            for t_f in neuron.spikes[t-100*dt < neuron.spikes]:
-                input_current += weight * eps(t - t_f)
-
-        # Safe the input current, but ignore it
+        # Calculate and save current, but ignore it
+        input_current = self.calculate_current(t)
         self.current.append(input_current)
 
-        # Spike depends on a homogoneous Poisson Process
+        # TODO: Spikes are also dependant on the timestep variable!
         if np.random.poisson(self.rate) >= 1:
             self.spikes = np.append(self.spikes, t)
             return True
@@ -65,24 +70,12 @@ class SpikingNeuron(Neuron):
         self.delta = delta
 
     def spike(self, t):
-        '''
-            Calculate and save input current at time t.
-            Return true if there's a spike at time t.
-        '''
-
-        # Calculate the input from other neurons
-        input_current = 0
-        for weight, neuron in self.connected_neurons:
-            for t_f in neuron.spikes[t-100*dt < neuron.spikes]:
-                input_current += weight * eps(t - t_f)
-
-        t_i = max(self.spikes) # Last spike
-        input_current += eta(t-t_i) # Accord for refractory time
-
-        # Safe the input current
+        ''' Is there a spike at time t? '''
+        
+        # Calculate and save current
+        input_current = self.calculate_current(t)
         self.current.append(input_current)
 
-        # Look if there is a spike
         if input_current > self.delta:
             self.spikes = np.append(self.spikes, t)
             return True
@@ -94,13 +87,13 @@ class SpikingNeuron(Neuron):
 n0 = PoissonNeuron(0.1)
 n1 = SpikingNeuron()
 n2 = SpikingNeuron()
+n0.connect(1,n1)
 n1.connect(1,n0)
 n2.connect(1,n1)
 
-
 # Simulate
 for t in time:
-    for n in [n0, n1, n2]: #todo quite ugly atm
+    for n in [n0, n1, n2]:
         n.spike(t)
 
 print "simulation finished"
