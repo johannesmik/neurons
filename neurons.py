@@ -23,7 +23,7 @@ def eps(s, t_current=1, t_membran=20):
 class Neuron(object):
     def __init__(self):
         self.current = []
-        self.spikes = np.array([-50])
+        self.spikes = np.array([])
         self.connected_neurons = []
 
     def calculate_current(self, t):
@@ -34,8 +34,10 @@ class Neuron(object):
                 input_current += weight * eps(t - t_f)
 
         # Accord for refractory time
-        t_i = max(self.spikes) # Last spike
-        input_current += eta(t-t_i)
+        if self.spikes.any():
+            t_i = max(self.spikes) # Last spike
+            input_current += eta(t-t_i)
+
         return input_current
 
     def connect(self, weight, neuron):
