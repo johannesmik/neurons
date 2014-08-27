@@ -16,8 +16,8 @@ def eta(s, nu_reset=5, t_membran=20):
     else:
         return - nu_reset*np.exp(-s/t_membran)
 
-def eps(s, t_current=0.3, t_membran=20):
-    ''' TODO explain this function '''
+def eps(s, t_current=1, t_membran=20):
+    ''' Returns a current, given by a spike that came in s milliseconds before. '''
     return (1/(1-t_current/t_membran))*(np.exp(-s/t_membran) - np.exp(-s/t_current))
 
 class Neuron(object):
@@ -87,7 +87,6 @@ class SpikingNeuron(Neuron):
 n0 = PoissonNeuron(0.1)
 n1 = SpikingNeuron()
 n2 = SpikingNeuron()
-n0.connect(1,n1)
 n1.connect(1,n0)
 n2.connect(1,n1)
 
@@ -101,6 +100,7 @@ print "simulation finished"
 # Plot results
 fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharex=True)
 ax0.set_title('Neuron 0, Poisson')
+ax0.set_ylim((-2,1))
 ax1.set_title('Neuron 1')
 ax2.set_title('Neuron 2')
 
