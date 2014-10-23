@@ -25,11 +25,11 @@ def plot_eta(ax, nu_reset, t_membran):
         ax.legend(prop={'size':10})
     ax.set_xlabel('time in ms')
     ax.set_ylabel('current in mV')
-    ax.set_ylim([-50, 20])
+    ax.set_ylim([-1, 1])
     ax.set_xlim([-10, 200])
 
-nu_resets = [50]
-t_membranes = [30]
+nu_resets = [0.50]
+t_membranes = [0.30]
 
 for i, nu_reset in enumerate(nu_resets):
     for j, t_membrane in enumerate(t_membranes):

@@ -17,8 +17,8 @@ def plot_eps(ax, t_current, t_membran):
 #t_currents = arange(0, 1, 0.2)
 #t_membranes = arange(0, 60, 10)
 
-t_currents = range(0, 60, 10)
-t_membranes = range(0, 60, 10)
+t_currents = [20, 100]
+t_membranes = [30, 110]
 
 for i, t_current in enumerate(t_currents):
     for j, t_membrane in enumerate(t_membranes):

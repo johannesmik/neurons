@@ -1,43 +1,51 @@
 ''' Not very efficient code, but quite readable '''
 
-
+from __future__ import print_function, division
 import numpy as np
 import matplotlib.pyplot as plt
 
-dt = 1      # time-step in ms
-T = 500    # total simulation time in ms
-p = 100     # 'discrete' spiketrains taken into account
-time = np.arange(0, T+dt, dt) # Time array
+dt = 1                    # time-step in milliseconds
+T = 1000                  # total simulation time in milliseconds
 
-def eta(s, nu_reset=5, t_membran=20):
+nu_reset = 80
+t_membran = 30
+t_current = 20
+c_initial = -60           # Initial current
+delta = -55               # Spiking threshold
+
+def eta(s, nu_reset, t_membran):
     ''' Refractory function '''
     if s == 0:
         return 10 # Spike delta
+
     else:
         return - nu_reset*np.exp(-s/t_membran)
 
-def eps(s, t_current=1, t_membran=20):
-    ''' Returns a current, given by a spike that came in s milliseconds before. '''
+def eps(s, t_current, t_membran):
+    ''' Returns a current, given by a spike that came in s seconds before. '''
     return (1/(1-t_current/t_membran))*(np.exp(-s/t_membran) - np.exp(-s/t_current))
 
 class Neuron(object):
-    def __init__(self):
-        self.current = []
+    def __init__(self, initial_current=-60):
+        self.current = [initial_current]
         self.spikes = np.array([])
         self.connected_neurons = []
 
     def calculate_current(self, t):
-        ''' Return the incoming current for time t '''
+        ''' Return the incoming current for time t and save it '''
+
+        if t == 0:
+            return self.current[0]
+
         input_current = 0
         for weight, neuron in self.connected_neurons:
             for t_f in neuron.spikes[t-100*dt < neuron.spikes]:
-                input_current += weight * eps(t - t_f)
-
-        # Accord for refractory time
+                input_current += weight * eps(t - t_f, t_current, t_membran)
+        # Accord for refractory time -> eta-function
         if self.spikes.any():
             t_i = max(self.spikes) # Last spike
-            input_current += eta(t-t_i)
-
+            input_current += eta(t-t_i, nu_reset, t_membran)
+        self.current.append(input_current)
         return input_current
 
     def connect(self, weight, neuron):
@@ -51,13 +59,11 @@ class PoissonNeuron(Neuron):
         self.rate = rate
 
     def spike(self, t):
-        ''' Random spike based on homog. Poisson process'''
+        ''' Is there a spike at time t? Based on homog Poisson process. Save spike '''
 
-        # Calculate and save current, but ignore it
-        input_current = self.calculate_current(t)
-        self.current.append(input_current)
+        # Calculate and save current, but ignore it (debugging reasons)
+        self.calculate_current(t)
 
-        # TODO: Spikes are also dependant on the timestep variable!
         if np.random.poisson(self.rate) >= 1:
             self.spikes = np.append(self.spikes, t)
             return True
@@ -66,24 +72,22 @@ class PoissonNeuron(Neuron):
 
 class SpikingNeuron(Neuron):
     ''' Neuron, spikes based on a input spiketrain '''
-    def __init__(self, nu_reset=5, delta=2):
+    def __init__(self, delta=-60):
         super(SpikingNeuron, self).__init__()
-        self.nu_reset = nu_reset
         self.delta = delta
 
     def spike(self, t):
-        ''' Is there a spike at time t? '''
-        
-        # Calculate and save current
-        input_current = self.calculate_current(t)
-        self.current.append(input_current)
+        ''' Is there a spike at time t? Based on incoming spikes. Save spike. '''
 
-        if input_current > self.delta:
+        # Calculate and save current
+        self.calculate_current(t)
+
+        if self.current[-1] > self.delta:
             self.spikes = np.append(self.spikes, t)
             return True
         else:
             return False
-        
+
 
 # Create some neurons and connect them
 n0 = PoissonNeuron(0.1)
@@ -93,16 +97,16 @@ n1.connect(1,n0)
 n2.connect(1,n1)
 
 # Simulate
+time = np.arange(0, T+dt, dt) # Time array
 for t in time:
     for n in [n0, n1, n2]:
         n.spike(t)
 
-print "simulation finished"
+print("simulation finished")
 
 # Plot results
 fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharex=True)
 ax0.set_title('Neuron 0, Poisson')
-ax0.set_ylim((-2,1))
 ax1.set_title('Neuron 1')
 ax2.set_title('Neuron 2')
 
