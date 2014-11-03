@@ -15,7 +15,7 @@ def simulate():
 
     # ~5% Spikes
     for i in range(time//20):
-        index = random.randint(0, time)
+        index = random.randint(0, time-1)
         u[index] = 1
 
     t_membran = 20

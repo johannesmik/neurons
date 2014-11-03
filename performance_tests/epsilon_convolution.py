@@ -26,9 +26,9 @@ def small_spiketrain():
 
 def big_spiketrain():
     # 1.000.000 timesteps Spiketrain
-    # With 10.000 random spikes
+    # With 50.000 random spikes
     s = np.array([0]*1000000)
-    for i in range(10000):
+    for i in range(50000):
         index = random.randint(0, 1000000)
         s[index] = 1
     return s
