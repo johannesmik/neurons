@@ -11,6 +11,7 @@ import cProfile
 import random
 import matplotlib.pyplot as plt
 
+
 def eps(s, t_membran):
     return np.exp(-s / t_membran)
 
