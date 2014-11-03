@@ -1,6 +1,4 @@
 import numpy as np
-from numpy.f2py.auxfuncs import throw_error
-
 
 def poisson_homogenous(mu, timesteps):
     """
@@ -30,33 +28,15 @@ def poisson_inhomogenous(mus, timesteps):
         startindex = i*bucketsize
         spiketrain[0, startindex:startindex+bucketsize] = np.random.poisson(lam=mu, size=bucketsize)
 
-    print "Generated inhomogenous spiketrain", spiketrain
+    print("Generated inhomogenous spiketrain", spiketrain)
 
     return spiketrain
 
 def sound():
-    mus = [0.02, 0.1, 0.4, 1.5, 0.4, 0.1, 0.02]
+    mus = [0.02, 0.1, 0.4, 0.8, 0.4, 0.1, 0.02]
     timesteps = 280
     s = poisson_inhomogenous(mus, timesteps)
     return s
-
-def generate(mu, size, active_neurons):
-    """
-    Marked to remove in next commit
-    """
-
-    # Empty spiketrain
-    spiketrain = np.zeros(shape=size, dtype=bool)
-
-    # Generate active spikes (Poisson distribution)
-    active_size = (len(active_neurons), size[1])
-    active_spikes = np.random.poisson(lam=mu, size=active_size)
-    active_spikes = np.array(active_spikes, dtype=bool)
-
-    # Overwrite empty spiketrain with active spikes
-    spiketrain[active_neurons,] = active_spikes
-
-    return spiketrain
 
 def plot(spiketrain):
 
@@ -81,4 +61,6 @@ if __name__ == "__main__":
     s = np.zeros((5, 280), dtype=bool)
     for i in range(5):
         s[i] = sound()
+
+    print(s)
     plot(s)

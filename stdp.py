@@ -21,7 +21,7 @@ def learning_window(x, tau):
 
 # TODO: Adaptive Learning window?
 
-def stdp(s, w):
+def stdp(s , w):
     """
     Calculate the weight change
 
@@ -81,6 +81,7 @@ def stdp(s, w):
 
     windowed = np.array(windowed)
 
+    # Calculate Weight Change
     weight_change = eta * (incoming_spikes * w_in + outgoing_spikes * w_out + windowed)
 
     print("Weight Change ", weight_change)
