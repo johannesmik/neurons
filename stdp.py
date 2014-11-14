@@ -4,6 +4,18 @@ Spike Timing Dependent Plasticity
 
 import numpy as np
 
+# TODO find a better name for this function and document it
+def learning_window_sum(t1, t2_list, tau):
+    """
+    Return the sum of learning windows, where
+    :param t2: Tuple of times
+    """
+    sum = 0
+    for t2 in t2_list:
+        sum += learning_window(t2-t1, tau)
+    return sum
+
+
 def learning_window(x, tau):
     """
     Constant Learning Window
@@ -19,72 +31,59 @@ def learning_window(x, tau):
     else:
         return 0
 
-# TODO: Adaptive Learning window?
 
-def stdp(s , w):
+def stdp(s, w):
     """
-    Calculate the weight change
+    Calculate the weight change. Analyzes the whole spiketrain, but only at the last time (last column).
 
     :param s: Spiketrain of learning window
     :param w: current weights
-    :return:
+    :return: Changes in weights
     """
-
 
     eta = 0.01
     w_in = 0.5
     w_out = 0.5
     tau = 10.0
 
-    neurons = s.shape[0]
+    neurons, current_time = s.shape
 
     connected_neurons = np.array(w, dtype=bool)
 
-    outgoing_spikes = np.sum(s, axis=1)
-    incoming_spikes = np.dot(connected_neurons.T, outgoing_spikes)
+    last_spikes = s[:,-1]
+    last_spikes = last_spikes[:, np.newaxis]
 
-    # Non-Numpy solution for calculating the learning windows
-    incoming_neurons = []
-    for i in range(neurons):
-        incoming_neurons.append([])
-        for j in range(neurons):
-            if w[j, i] != 0:
-                incoming_neurons[i].append(j)
+    # Calculate the weight change for presynaptic spikes
+    weight_change_presynaptic = last_spikes * connected_neurons * w_in
+    print("Weight change in:", weight_change_presynaptic)
 
-    print("Incoming neurons:", incoming_neurons)
+    # Calculate the weight change for postsynaptic spikes
+    weight_change_postsynaptic = last_spikes.T * connected_neurons * w_out
+    print("Weight change out:", weight_change_postsynaptic)
 
-    outgoing_spikes_time = []
-    for i in range(neurons):
-        outgoing_spikes_time.append([])
-        for time, spike in enumerate(s[i,:]):
+    # Calculate the weight changes in regards of the learning window
+    spikes_time = []
+    for neuron in range(neurons):
+        spikes_time.append([])
+        for time, spike in enumerate(s[neuron, :]):
             if spike:
-                outgoing_spikes_time[i].append(time)
+                spikes_time[neuron].append(time)
+    print("Outgoing spikes time", spikes_time)
 
-    incoming_spikes_time = []
-    for i in range(neurons):
-        incoming_spikes_time.append([])
-        for j in incoming_neurons[i]:
-            incoming_spikes_time[i].extend(outgoing_spikes_time[j])
+    sum = [learning_window_sum(current_time, x, tau) for x in spikes_time] # TODO find better name
+    sum = np.array(sum, ndmin=2)
+    print("Summe: ", sum, sum.shape)
 
-    print("Outgoing Spike Times:", outgoing_spikes_time)
-    print("Incoming Spike Times:", incoming_spikes_time)
+    learning_window_presynaptic = (last_spikes.T * connected_neurons) * sum.T
+    print("presynaptic learning window", learning_window_presynaptic)
 
-    windowed = []
-    for i in range(neurons):
-        windowed.append(0)
-        for incoming_time in incoming_spikes_time[i]:
-            for outgoing_time in outgoing_spikes_time[i]:
-                #windowed[i].append("W(%i - %i)" % (incoming_time, outgoing_time))
-                windowed[i] += learning_window(incoming_time - outgoing_time, tau)
+    learning_window_postsynaptic = (last_spikes * connected_neurons) * sum.T
+    print("postsynaptic learning window", learning_window_postsynaptic)
 
-    print("Windowed Learning:", windowed)
-
-    windowed = np.array(windowed)
-
-    # Calculate Weight Change
-    weight_change = eta * (incoming_spikes * w_in + outgoing_spikes * w_out + windowed)
-
-    print("Weight Change ", weight_change)
+    # Total weight change
+    weight_change = eta * (weight_change_presynaptic + weight_change_postsynaptic + learning_window_presynaptic
+                           + learning_window_postsynaptic)
+    print("type of weight change:", type(weight_change))
 
     return weight_change
 
@@ -101,4 +100,5 @@ if __name__ == "__main__":
     print("Spike Train", s)
     print("Weights", w)
 
-    stdp(s, w)
+    w = w + stdp(s, w)
+    print("updated weights", w)
