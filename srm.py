@@ -65,18 +65,14 @@ if __name__ == "__main__":
 
     threshold = 1.0
     t_current = 0.3                 # Time of current (t_s)
-    t_membran = 2                  # Membran-time-constant (t_m)
-    nu_reset = 1
+    t_membran = 20                  # Membran-time-constant (t_m)
+    nu_reset = 5
 
     last_spike = np.ones(neurons, dtype=int) * -1000000
-
-    current_plot = []
 
     for t in range(timesteps):
 
         total_current = simulate_linearized(s, w, t, last_spike, t_current, t_membran, nu_reset)
-
-        current_plot.append(total_current[2])
 
         # Update spiketrain. Any new spikes?
         neurons_high_current = np.where(total_current > threshold)
@@ -89,10 +85,4 @@ if __name__ == "__main__":
         print("This neurons spike", neurons_high_current)
         print(s)
 
-        print("--------------")
-
-    print("Eps Function: ", eps.cache_info())
-    import matplotlib.pyplot as plt
-    plt.plot(current_plot)
-    plt.grid(True)
-    plt.show()
+        print("--------------"
