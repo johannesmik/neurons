@@ -85,4 +85,4 @@ if __name__ == "__main__":
         print("This neurons spike", neurons_high_current)
         print(s)
 
-        print("--------------"
+        print("--------------")
