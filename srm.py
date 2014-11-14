@@ -21,7 +21,8 @@ def eps_vector(k, size, t_current, t_membran):
 
 def simulate_linearized(s, w, t, last_spike, t_current, t_membran, nu_reset):
     """
-    Simulate one timestep at time t
+    Simulate one timestep at time t.
+    Return the total current of all neurons
 
     :param s:
     :param w:
@@ -29,7 +30,7 @@ def simulate_linearized(s, w, t, last_spike, t_current, t_membran, nu_reset):
     :param t_current:
     :param t_membran:
     :param nu_reset:
-    :return:
+    :return: total current of all neurons at timestep t (vector)
     """
 
     neurons, timesteps = s.shape
