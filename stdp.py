@@ -53,6 +53,8 @@ def stdp(s, w):
     last_spikes = s[:,-1]
     last_spikes = last_spikes[:, np.newaxis]
 
+    print("Last spikes", last_spikes)
+
     # Calculate the weight change for presynaptic spikes
     weight_change_presynaptic = last_spikes * connected_neurons * w_in
     print("Weight change in:", weight_change_presynaptic)
@@ -72,12 +74,13 @@ def stdp(s, w):
 
     sum = [learning_window_sum(current_time, x, tau) for x in spikes_time] # TODO find better name
     sum = np.array(sum, ndmin=2)
+    sum = sum.T # Make it a column-vector
     print("Summe: ", sum, sum.shape)
 
-    learning_window_presynaptic = (last_spikes.T * connected_neurons) * sum.T
+    learning_window_presynaptic = (last_spikes.T * connected_neurons) * sum
     print("presynaptic learning window", learning_window_presynaptic)
 
-    learning_window_postsynaptic = (last_spikes * connected_neurons) * sum.T
+    learning_window_postsynaptic = (last_spikes * connected_neurons) * sum
     print("postsynaptic learning window", learning_window_postsynaptic)
 
     # Total weight change
