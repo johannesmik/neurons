@@ -80,7 +80,7 @@ def stdp(s, w):
     learning_window_presynaptic = (last_spikes.T * connected_neurons) * sum
     print("presynaptic learning window", learning_window_presynaptic)
 
-    learning_window_postsynaptic = (last_spikes * connected_neurons) * sum
+    learning_window_postsynaptic = (last_spikes * connected_neurons) * sum.T
     print("postsynaptic learning window", learning_window_postsynaptic)
 
     # Total weight change
@@ -92,7 +92,7 @@ def stdp(s, w):
 
 if __name__ == "__main__":
 
-    s = np.array([[0, 0, 1, 1, 0],
+    s = np.array([[0, 0, 1, 1, 1],
                   [0, 0, 1, 0, 0],
                   [0, 0, 1, 0, 1]])
 
