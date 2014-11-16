@@ -1,19 +1,20 @@
-'''
+"""
 Spike Timing Dependent Plasticity
-'''
+"""
 
 import numpy as np
 
-# TODO find a better name for this function and document it
-def learning_window_sum(t1, t2_list, tau):
+
+def learning_window_neuron(t1, t2_list, tau):
     """
-    Return the sum of learning windows, where
-    :param t2: Tuple of times
+    Return the sum of the learning windows of one neuron.
+    :param t1: current time
+    :param t2_list: spiking times of neuron
     """
-    sum = 0
+    sum_result = 0
     for t2 in t2_list:
-        sum += learning_window(t2-t1, tau)
-    return sum
+        sum_result += learning_window(t2 - t1, tau)
+    return sum_result
 
 
 def learning_window(x, tau):
@@ -25,19 +26,19 @@ def learning_window(x, tau):
     """
 
     if x > 0:
-        return np.exp(x/tau)
+        return np.exp(x / tau)
     elif x < 0:
-        return np.exp(-x/tau)
+        return np.exp(-x / tau)
     else:
         return 0
 
 
-def stdp(s, w):
+def stdp(spikes, weights):
     """
     Calculate the weight change. Analyzes the whole spiketrain, but only at the last time (last column).
 
-    :param s: Spiketrain of learning window
-    :param w: current weights
+    :param spikes: Spiketrain of learning window
+    :param weights: current weights
     :return: Changes in weights
     """
 
@@ -46,11 +47,11 @@ def stdp(s, w):
     w_out = 0.5
     tau = 10.0
 
-    neurons, current_time = s.shape
+    neurons, current_time = spikes.shape
 
-    connected_neurons = np.array(w, dtype=bool)
+    connected_neurons = np.array(weights, dtype=bool)
 
-    last_spikes = s[:,-1]
+    last_spikes = spikes[:, -1]
     last_spikes = last_spikes[:, np.newaxis]
 
     print("Last spikes", last_spikes)
@@ -67,20 +68,20 @@ def stdp(s, w):
     spikes_time = []
     for neuron in range(neurons):
         spikes_time.append([])
-        for time, spike in enumerate(s[neuron, :]):
+        for time, spike in enumerate(spikes[neuron, :]):
             if spike:
                 spikes_time[neuron].append(time)
     print("Outgoing spikes time", spikes_time)
 
-    sum = [learning_window_sum(current_time, x, tau) for x in spikes_time] # TODO find better name
-    sum = np.array(sum, ndmin=2)
-    sum = sum.T # Make it a column-vector
-    print("Summe: ", sum, sum.shape)
+    neuron_learnwindow = [learning_window_neuron(current_time, x, tau) for x in spikes_time]
+    neuron_learnwindow = np.array(neuron_learnwindow, ndmin=2)
+    neuron_learnwindow = neuron_learnwindow.T  # Make it a column-vector
+    print("Summe: ", neuron_learnwindow, neuron_learnwindow.shape)
 
-    learning_window_presynaptic = (last_spikes.T * connected_neurons) * sum
+    learning_window_presynaptic = (last_spikes.T * connected_neurons) * neuron_learnwindow
     print("presynaptic learning window", learning_window_presynaptic)
 
-    learning_window_postsynaptic = (last_spikes * connected_neurons) * sum.T
+    learning_window_postsynaptic = (last_spikes * connected_neurons) * neuron_learnwindow.T
     print("postsynaptic learning window", learning_window_postsynaptic)
 
     # Total weight change
