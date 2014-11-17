@@ -19,35 +19,62 @@ def eps_vector(k, size, t_current, t_membran):
 
     return vector
 
-def simulate_linearized(s, w, t, last_spike, t_current, t_membran, nu_reset):
-    """
-    Simulate one timestep at time t.
-    Return the total current of all neurons
+class SRM:
+    def __init__(self, neurons, threshold, t_current, t_membran, nu_reset, verbose=False):
+        """
 
-    :param s:
-    :param w:
-    :param threshold:
-    :param t_current:
-    :param t_membran:
-    :param nu_reset:
-    :return: total current of all neurons at timestep t (vector)
-    """
+        :param neurons:
+        :param threshold:
+        :param t_current: Current-time-constant (t_s)
+        :param t_membran: Membran-time-constant (t_m)
+        :param nu_reset:
+        :param verbose:
+        :return:
+        """
+        self.neurons = neurons
+        self.threshold = threshold
+        self.t_current = t_current
+        self.t_membran = t_membran
+        self.nu_reset = nu_reset
+        self.verbose = verbose
+        self.last_spike = np.ones(self.neurons, dtype=float) * -1000000
 
-    neurons, timesteps = s.shape
+    def simulate(self, s, w, t):
+        """
+        Simulate one timestep at time t. Changes the spiketrain in Place at time t!
+        Return the total current of all neurons
 
-    epsilon = eps_vector(t, timesteps, t_current, t_membran)
+        :param s: Spiketrain
+        :param w: Weights
+        :param t: Evaluation time
+        :return: total current of all neurons at timestep t (vector)
+        """
 
-    incoming_spikes = np.dot(w.T, s)
-    incoming_current = np.dot(incoming_spikes, epsilon)
-    total_current = eta(np.ones(neurons)*t - last_spike, nu_reset, t_membran) + incoming_current
+        neurons, timesteps = s.shape
 
-    print("SRM Timestep", t)
-    print("Incoming current", incoming_current)
-    print("Total current", total_current)
-    print("Last spike", last_spike)
-    print("")
+        epsilon = eps_vector(t, timesteps, self.t_current, self.t_membran)
 
-    return total_current
+        # Calculate current
+        incoming_spikes = np.dot(w.T, s)
+        incoming_current = np.dot(incoming_spikes, epsilon)
+        total_current = eta(np.ones(neurons)*t - self.last_spike, self.nu_reset, self.t_membran) + incoming_current
+
+        # Any new spikes?
+        neurons_high_current = np.where(total_current > self.threshold)
+        s[neurons_high_current, t] = True
+
+        # Update last_spike
+        spiking_neurons = np.where(s[:, t])
+        self.last_spike[spiking_neurons] = t
+
+        if self.verbose:
+            print("SRM Timestep", t)
+            print("Incoming current", incoming_current)
+            print("Total current", total_current)
+            print("Last spike", self.last_spike)
+            print("")
+
+        return total_current
 
 
 if __name__ == "__main__":
@@ -56,34 +83,19 @@ if __name__ == "__main__":
                   [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
 
-    s = np.array([[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                  [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
-
     w = np.array([[0,0,1],[0,0,1],[0,0,0]])
 
     neurons, timesteps = s.shape
 
-    threshold = 1.0
-    t_current = 0.3                 # Time of current (t_s)
-    t_membran = 20                  # Membran-time-constant (t_m)
-    nu_reset = 5
-
-    last_spike = np.ones(neurons, dtype=int) * -1000000
+    model = SRM(neurons, threshold=1, t_current=0.3, t_membran=20, nu_reset=5, verbose=True)
 
     for t in range(timesteps):
 
-        total_current = simulate_linearized(s, w, t, last_spike, t_current, t_membran, nu_reset)
+        total_current = model.simulate(s, w, t)
 
-        # Update spiketrain. Any new spikes?
-        neurons_high_current = np.where(total_current > threshold)
-        s[neurons_high_current, t] = True
-
-        # Update last_spike
-        spiking_neurons = np.where(s[:, t])
-        last_spike[spiking_neurons] = t
-
-        print("This neurons spike", neurons_high_current)
+        neurons_high_current = np.where(total_current > 1)
+        print("These neurons have a high current: ", neurons_high_current)
+        print("Spiketrain")
         print(s)
 
         print("--------------")
