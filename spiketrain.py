@@ -28,14 +28,16 @@ def poisson_inhomogenous(mus, timesteps):
         startindex = i*bucketsize
         spiketrain[0, startindex:startindex+bucketsize] = np.random.poisson(lam=mu, size=bucketsize)
 
-    print("Generated inhomogenous spiketrain", spiketrain)
+    # print("Generated inhomogenous spiketrain", spiketrain)
 
     return spiketrain
 
-def sound():
-    mus = [0.02, 0.1, 0.4, 0.8, 0.4, 0.1, 0.02]
-    timesteps = 280
-    s = poisson_inhomogenous(mus, timesteps)
+def sound(timesteps, midpoint, maximum, variance):
+    mu = np.arange(timesteps)
+    mu = maximum * np.exp(-((mu - midpoint ) ** 2) / variance ** 2)
+    import matplotlib.pyplot as plt
+    plt.plot(mu)
+    s = poisson_inhomogenous(mu, timesteps)
     return s
 
 def plot(spiketrain):
@@ -61,7 +63,8 @@ def plot_psth(spiketrain, binsize=20):
 
     neurons, timesteps = spiketrain.shape
 
-    bins = timesteps // binsize
+    bins=range(0, timesteps + binsize, binsize)
+    print ("Bins:", bins)
 
     fig, axes = plt.subplots(nrows=neurons)
 
@@ -83,12 +86,9 @@ def plot_psth(spiketrain, binsize=20):
 
 
 if __name__ == "__main__":
-    #s = generate(0.1, (3, 100), [0, 1])
-    #s = poisson_homogenous(0.1, 100)
-    #s = poisson_inhomogenous([0.1, 2, 0.1, 2, 0.1], 500)
     s = np.zeros((5, 280), dtype=bool)
     for i in range(5):
-        s[i] = sound()
+        s[i] = sound(280, i*50, 0.4, 50)
 
     print(s)
-    plot_psth(s, 40)
+    plot_psth(s, binsize=25)
