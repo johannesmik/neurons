@@ -32,77 +32,102 @@ def learning_window(x, tau):
     else:
         return 0
 
+class STDP:
+    def __init__(self, eta, w_in, w_out, tau, window_size, verbose=False):
+        self.eta = eta
+        self.w_in = w_in
+        self.w_out = w_out
+        self.tau = tau
+        self.window_size = window_size  # T_l
+        self.verbose = verbose
 
-def stdp(spikes, weights):
-    """
-    Calculate the weight change. Analyzes the whole spiketrain, but only at the last time (last column).
+    def weight_change(self, spikes, weights, t):
+        """
+        Calculate the weight change at time t. Changes the weights in place.
 
-    :param spikes: Spiketrain of learning window
-    :param weights: current weights
-    :return: Changes in weights
-    """
+        :param spikes: Spiketrain
+        :param weights: current weights
+        :return: Changes in weights
+        """
 
-    eta = 0.01
-    w_in = 0.5
-    w_out = 0.5
-    tau = 10.0
+        if weights.dtype != 'float':
+            raise ValueError('The weight matrix has to be a float array. (Try to create it with dtype=float)')
 
-    neurons, current_time = spikes.shape
+        # Trim spiketrain, so that it's 'windowed' (look at variable T_l in the script)
+        spikes = spikes[:, max(0, t+1-self.window_size):t+1]
 
-    connected_neurons = np.array(weights, dtype=bool)
+        if not spikes.any():
+            if self.verbose:
+                print("--------------------------")
+                print("Calculating STDP weight change at time")
+                print("No spikes found")
+            return np.zeros(weights.shape)
 
-    last_spikes = spikes[:, -1]
-    last_spikes = last_spikes[:, np.newaxis]
+        neurons, current_time = spikes.shape
 
-    print("Last spikes", last_spikes)
+        connected_neurons = np.array(weights, dtype=bool)
 
-    # Calculate the weight change for presynaptic spikes
-    weight_change_presynaptic = last_spikes * connected_neurons * w_in
-    print("Weight change in:", weight_change_presynaptic)
+        last_spikes = spikes[:, -1]
+        last_spikes = last_spikes[:, np.newaxis]
 
-    # Calculate the weight change for postsynaptic spikes
-    weight_change_postsynaptic = last_spikes.T * connected_neurons * w_out
-    print("Weight change out:", weight_change_postsynaptic)
+        # Calculate the weight change for presynaptic spikes
+        weight_change_presynaptic = last_spikes * connected_neurons * self.w_in
 
-    # Calculate the weight changes in regards of the learning window
-    spikes_time = []
-    for neuron in range(neurons):
-        spikes_time.append([])
-        for time, spike in enumerate(spikes[neuron, :]):
-            if spike:
-                spikes_time[neuron].append(time)
-    print("Outgoing spikes time", spikes_time)
+        # Calculate the weight change for postsynaptic spikes
+        weight_change_postsynaptic = last_spikes.T * connected_neurons * self.w_out
 
-    neuron_learnwindow = [learning_window_neuron(current_time, x, tau) for x in spikes_time]
-    neuron_learnwindow = np.array(neuron_learnwindow, ndmin=2)
-    neuron_learnwindow = neuron_learnwindow.T  # Make it a column-vector
-    print("Summe: ", neuron_learnwindow, neuron_learnwindow.shape)
+        # Calculate the weight changes in regards of the learning window
+        spikes_time = []
+        for neuron in range(neurons):
+            spikes_time.append([])
+            for time, spike in enumerate(spikes[neuron, :]):
+                if spike:
+                    spikes_time[neuron].append(time)
 
-    learning_window_presynaptic = (last_spikes.T * connected_neurons) * neuron_learnwindow
-    print("presynaptic learning window", learning_window_presynaptic)
+        neuron_learnwindow = [learning_window_neuron(current_time, x, self.tau) for x in spikes_time]
+        neuron_learnwindow = np.array(neuron_learnwindow, ndmin=2)
+        neuron_learnwindow = neuron_learnwindow.T  # Make it a column-vector
 
-    learning_window_postsynaptic = (last_spikes * connected_neurons) * neuron_learnwindow.T
-    print("postsynaptic learning window", learning_window_postsynaptic)
+        learning_window_presynaptic = (last_spikes.T * connected_neurons) * neuron_learnwindow
 
-    # Total weight change
-    weight_change = eta * (weight_change_presynaptic + weight_change_postsynaptic + learning_window_presynaptic
-                           + learning_window_postsynaptic)
-    print("type of weight change:", type(weight_change))
+        learning_window_postsynaptic = (last_spikes * connected_neurons) * neuron_learnwindow.T
 
-    return weight_change
+        # Total weight change
+        weight_change = self.eta * (weight_change_presynaptic + weight_change_postsynaptic + learning_window_presynaptic
+                               + learning_window_postsynaptic)
+
+        # Change the weight in place
+        weights = weights.__iadd__(weight_change)
+        if self.verbose:
+            print("--------------------------")
+            print("Calculating STDP weight change at time")
+            print("Last spikes", last_spikes)
+            print("Weight change in:", weight_change_presynaptic)
+            print("Weight change out:", weight_change_postsynaptic)
+            print("Outgoing spikes time", spikes_time)
+            print("Summe: ", neuron_learnwindow, neuron_learnwindow.shape)
+            print("presynaptic learning window", learning_window_presynaptic)
+            print("postsynaptic learning window", learning_window_postsynaptic)
+            print("type of weight change:", type(weight_change))
+            print("updatet weights (function):", weights)
+            print("")
+
+        return weight_change
+
 
 if __name__ == "__main__":
 
     s = np.array([[0, 0, 1, 1, 1],
                   [0, 0, 1, 0, 0],
-                  [0, 0, 1, 0, 1]])
+                  [0, 0, 1, 0, 1]], dtype=bool)
 
-    w = np.array([[0, 0, 1],
+    w = np.array([[0, 1, 1],
                   [0, 0, 1],
-                  [0, 0, 0]])
+                  [0, 0, 0]], dtype=float)
 
     print("Spike Train", s)
     print("Weights", w)
 
-    w = w + stdp(s, w)
+    learning_model = STDP(eta=0.05, w_in=0.5, w_out=0.5, tau=10.0, window_size=4, verbose=True)
+    print("Weight change: ", learning_model.weight_change(s, w, 2))
     print("updated weights", w)
