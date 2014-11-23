@@ -26,9 +26,9 @@ def learning_window(x, tau):
     """
 
     if x > 0:
-        return np.exp(x / tau)
+        return - np.exp(-x / tau)
     elif x < 0:
-        return np.exp(-x / tau)
+        return np.exp(x / tau)
     else:
         return 0
 
