@@ -121,5 +121,53 @@ class TestSimpleChanges:
 
         assert np.array_equal(suggested_weights, weights)
 
-class TestSelected:
-    pass
+class TestPrecalculatedExample:
+    """
+    In the script "Theory of Synaptic Plasticity" on page 20 there's
+    a concrete example of STDP learning. (I didn't include the spike t_i^2 so that the weights stay equal.)
+    Here, I calculated the weight changes manually (with meaningful parameters)
+    and compare them with the weight changes calculated by the program.
+    """
+    #TODO add a graphic in the documentation, for visualizing the times and so on
+    #TODO parameterize tests nicely!
+
+
+    @classmethod
+    def setup_class(cls):
+        """ setup any state specific to the execution of the given class (which
+        usually contains tests).
+        """
+        cls.spiketrain = np.zeros((2, 51), dtype=bool)
+        cls.spiketrain[0, (20, 24, 25, 40, 50)] = True
+        cls.spiketrain[1, (10, 45)] = True
+        cls.weights = np.array([[0, 1],
+                                [0, 0]], dtype=float)
+        cls.simulation_started = False
+        cls.model = stdp.STDP(eta=1, w_in=0.5, w_out=-0.5, tau=5., window_size=10)
+
+
+
+    @pytest.mark.parametrize("time, expected_change", [
+                             (10, -0.5),
+                             (20, 0.5),
+                             (40, 0.5),
+                             (45, -0.132121),
+                             (50, 0.132121)])
+    def test_time(self, time, expected_change):
+
+        self.simulation_started = True
+
+        weights_before = self.weights.copy()
+
+        # Expected weights
+        expected_weights = np.array([[0, expected_change],[0, 0]])
+        expected_weights += weights_before
+
+        self.model.weight_change(self.spiketrain, self.weights, time)
+        print("Time:", time)
+        print("Weights before", weights_before)
+        print("Weights after", self.weights)
+        print("Expected weights", expected_weights)
+
+        nullmatrix = np.zeros((2, 2))
+        assert np.array_equal(nullmatrix, np.around(expected_weights - self.weights, 4))
