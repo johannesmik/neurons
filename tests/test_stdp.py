@@ -2,7 +2,6 @@ __author__ = 'johannes'
 
 import stdp
 import pytest
-
 import numpy as np
 
 # TODO I quite don't like the fixtures yet, maybe I can parameterize them differently in future?
@@ -170,4 +169,12 @@ class TestPrecalculatedExample:
         print("Expected weights", expected_weights)
 
         nullmatrix = np.zeros((2, 2))
-        assert np.array_equal(nullmatrix, np.around(expected_weights - self.weights, 4))
+        assert np.array_equal(nullmatrix, np.around(expected_weights - self.weights, 5))
+
+    def test_after(self):
+        '''
+        Tests the weights after all previous tests have finished
+        '''
+        expected_weights = np.array([[0, 1.5], [0, 0]], dtype=float)
+        nullmatrix = np.zeros((2, 2))
+        assert np.array_equal(nullmatrix, np.around(expected_weights - self.weights, 5))

@@ -1,7 +1,7 @@
 __author__ = 'johannes'
 
 import numpy as np
-import srm
+import spiking
 import stdp
 
 def simulate_srm_stdp(spiketrain, weights, **kwargs):
@@ -14,7 +14,7 @@ def simulate_srm_stdp(spiketrain, weights, **kwargs):
     t_membran = 20                  # Membran-time-constant (t_m)
     nu_reset = 5
 
-    spiking_model = srm.SRM(neurons=neurons, threshold=threshold, t_current=t_current,
+    spiking_model = spiking.SRM(neurons=neurons, threshold=threshold, t_current=t_current,
                             t_membran=t_membran, nu_reset=nu_reset, verbose=False)
 
     t_l = 5                         # T_l (learning window size)
