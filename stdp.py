@@ -43,7 +43,6 @@ class STDP:
         :param x:
         :return:
         """
-        print("calling lw with x=", x)
         if x > 0:
             return - np.exp(-x / self.tau)
         elif x < 0:
