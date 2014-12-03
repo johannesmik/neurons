@@ -1,5 +1,9 @@
 import numpy as np
 
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib import cm
+
 def poisson_homogenous(mu, timesteps):
     """
     Generate a spiketrain for a single neuron
@@ -42,8 +46,6 @@ def sound(timesteps, midpoint, maximum, variance):
 
 def plot(spiketrain):
 
-    import matplotlib.pyplot as plt
-
     plt.title("Spiketrain plot")
     plt.ylabel("Neuron")
     plt.xlabel("Time")
@@ -56,7 +58,28 @@ def plot(spiketrain):
     plt.show()
 
 
-def plot_psth(spiketrain, binsize=20):
+class WeightPlotter:
+    def __init__(self, save_interval):
+        self.save_interval = save_interval
+        self.weights = []
+
+    def add(self, weights):
+        self.weights.append(weights.copy())
+
+    def plot_weights(self):
+
+        fig = plt.figure()
+
+        ims = []
+        for weight in self.weights:
+            im = plt.imshow(weight, vmin=-1, vmax=1, interpolation='none', cmap=cm.coolwarm)
+            ims.append([im])
+
+        ani = animation.ArtistAnimation(fig, ims, interval=20, repeat_delay=3000)
+#        ani.save('weightchange.mp4', writer='mencoder', fps=15)
+        plt.show()
+
+def plot_psth(spiketrain, binsize=20, neuron_indices=None):
     """ Plot a Peri-Stimulus Time Histogram """
 
     import matplotlib.pyplot as plt
@@ -66,18 +89,25 @@ def plot_psth(spiketrain, binsize=20):
     bins=range(0, timesteps + binsize, binsize)
     print ("Bins:", bins)
 
-    fig, axes = plt.subplots(nrows=neurons)
+    if not neuron_indices:
+        print ("Printing all neurons!!")
+        neuron_indices = range(neurons)
+
+    n_plots = len(neuron_indices) # Number of subplots
+
+    fig, axes = plt.subplots(nrows=n_plots)
 
     for i, axis in enumerate(axes):
+        neuron_index = neuron_indices[i]
         # Histogramm
-        times = np.where(spiketrain[i])[0]
+        times = np.where(spiketrain[neuron_index])[0]
         axis.hist(times, bins, histtype='bar', stacked=True, fill=True, facecolor='green', alpha=0.5, zorder=0)
 
         # Scatter (Spikes)
         y = np.ones(times.shape)
         axis.scatter(times, y, c='r', s=20, marker="x", zorder=1)
 
-        axis.set_title('Neuron %d' % i)
+        axis.set_title('Neuron %d' % neuron_index)
         axis.set_ylim(bottom=0)
         axis.set_xlim(0, timesteps)
 
