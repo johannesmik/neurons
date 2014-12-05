@@ -4,60 +4,68 @@ __author__ = 'johannes'
 import numpy as np
 import functools
 
-def eta(s, nu_reset, t_membran, spike=10):
-    return - nu_reset*np.exp(-s/t_membran)
-
-@functools.lru_cache()
-def eps(s, t_current, t_membran):
-    return (1/(1-t_current/t_membran))*(np.exp(-s/t_membran) - np.exp(-s/t_current))
-
-def eps_vector(k, size, t_current, t_membran):
-    vector = np.zeros(size, dtype=float)
-
-    for i in range(k):
-        vector[i] = eps(k-i, t_current, t_membran)
-
-    return vector
 
 class SRM:
-    def __init__(self, neurons, threshold, t_current, t_membran, nu_reset, verbose=False):
+    def __init__(self, neurons, threshold, t_current, t_membrane, nu_reset, simulation_window_size=100, verbose=False):
         """
+        SRM_0 (Spike Response Model)
 
-        :param neurons:
-        :param threshold:
+        :param neurons: Number of neurons
+        :param threshold: Spiking threshold
         :param t_current: Current-time-constant (t_s)
-        :param t_membran: Membran-time-constant (t_m)
-        :param nu_reset:
+        :param t_membrane: Membrane-time-constant (t_m)
+        :param nu_reset: Reset constant
+        :param simulation_window_size: Only look at the n last spikes
         :param verbose:
         :return:
         """
         self.neurons = neurons
         self.threshold = threshold
         self.t_current = t_current
-        self.t_membran = t_membran
+        self.t_membrane = t_membrane
         self.nu_reset = nu_reset
+        self.simulation_window_size = simulation_window_size
         self.verbose = verbose
         self.last_spike = np.ones(self.neurons, dtype=float) * -1000000
 
+    def eta(self, s):
+        return - self.nu_reset*np.exp(-s/self.t_membrane)
+
+    @functools.lru_cache()
+    def eps(self, s):
+        return (1/(1-self.t_current/self.t_membrane))*(np.exp(-s/self.t_membrane) - np.exp(-s/self.t_current))
+
+    @functools.lru_cache()
+    def eps_vector(self, k, size):
+        vector = np.zeros(size, dtype=float)
+
+        for i in range(k):
+            vector[i] = self.eps(k-i)
+
+        return vector
+
     def simulate(self, s, w, t):
         """
-        Simulate one timestep at time t. Changes the spiketrain in Place at time t!
-        Return the total current of all neurons
+        Simulate one time step at time t. Changes the spiketrain in place at time t!
+        Return the total current of all neurons.
 
         :param s: Spiketrain
         :param w: Weights
         :param t: Evaluation time
-        :return: total current of all neurons at timestep t (vector)
+        :return: total current of all neurons at time step t (vector)
         """
 
-        neurons, timesteps = s.shape
+        # Work on a windowed view
+        s_t = s[:, max(0, t+1-self.simulation_window_size):t+1]
 
-        epsilon = eps_vector(t, timesteps, self.t_current, self.t_membran)
+        neurons, timesteps = s_t.shape
+
+        epsilon = self.eps_vector(min(self.simulation_window_size, t), timesteps)
 
         # Calculate current
-        incoming_spikes = np.dot(w.T, s)
+        incoming_spikes = np.dot(w.T, s_t)
         incoming_current = np.dot(incoming_spikes, epsilon)
-        total_current = eta(np.ones(neurons)*t - self.last_spike, self.nu_reset, self.t_membran) + incoming_current
+        total_current = self.eta(np.ones(neurons)*t - self.last_spike) + incoming_current
 
         # Any new spikes?
         neurons_high_current = np.where(total_current > self.threshold)
@@ -68,7 +76,7 @@ class SRM:
         self.last_spike[spiking_neurons] = t
 
         if self.verbose:
-            print("SRM Timestep", t)
+            print("SRM Time step", t)
             print("Incoming current", incoming_current)
             print("Total current", total_current)
             print("Last spike", self.last_spike)
@@ -76,26 +84,74 @@ class SRM:
 
         return total_current
 
+class Izhikevich:
+    """
+     Izhikevich model
+
+     http://www.izhikevich.org/publications/spikes.htm
+    """
+    # TODO this model looks wrong, look at it, and fix it
+    def __init__(self, neurons, a, b, c, d, threshold=30, verbose=False):
+        self.a = a * np.ones((neurons, 1))
+        self.b = b * np.ones((neurons, 1))
+        self.c = c * np.ones((neurons, 1))
+        self.d = d * np.ones((neurons, 1))
+        self.threshold = threshold
+        self.verbose = verbose
+
+        # Initial u and v
+        self.v = -65 * np.ones((neurons, 1))  # Todo magic number 65
+        self.u = self.b*self.v
+        self.v_plot = np.empty((neurons, 0))
+
+    def simulate(self, s, w, t):
+        # Input
+        I = 15 * s[:, t] # Todo magic number 15
+        I = I[:, np.newaxis]
+        fired = np.nonzero(self.v >= self.threshold)[0]  # Indices of neurons that spike
+        print(fired)
+        t = np.array([t+0*fired, fired])
+        s[fired, t] = True
+        self.v_plot = np.hstack((self.v_plot, self.v))
+
+        self.v[fired] = self.c[fired]
+        self.u[fired] = self.u[fired] + self.d[fired]
+
+        I = I + np.sum(w[fired, :], axis=0, keepdims=True)
+        self.v = self.v + 0.5 * (0.04 * self.v ** 2 + 5 * self.v + 140 - self.u + I)  # step 0.5 ms
+        self.v = self.v + 0.5 * (0.04 * self.v ** 2 + 5 * self.v + 140 - self.u + I)  # for numerical
+        self.u = self.u + self.a * (np.multiply(self.b, self.v) - self.u)             # stability
+
+        if self.verbose:
+            print("Izhikevich Time step", t)
+            print("Total current", self.v)
+            print("Fired: ", fired)
+            print("")
+
+        return self.v
+
 
 if __name__ == "__main__":
 
-    s = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0],
-                  [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+    srm_model = SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5, verbose=True)
+    izhikevich_model = Izhikevich(neurons=3, a=0.02, b=0.2, c=-65, d=8, threshold=30, verbose=True)
 
-    w = np.array([[0,0,1],[0,0,1],[0,0,0]])
+    models = [srm_model, izhikevich_model]
 
-    neurons, timesteps = s.shape
+    for model in models:
+        print("-"*10)
+        if isinstance(model, SRM):
+            print('Demonstration of the SRM Model')
+        elif isinstance(model, Izhikevich):
+            print('Demonstration of the Izhikevich Model')
 
-    model = SRM(neurons, threshold=1, t_current=0.3, t_membran=20, nu_reset=5, verbose=True)
+        s = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0],
+                      [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
 
-    for t in range(timesteps):
+        w = np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
+        neurons, timesteps = s.shape
 
-        total_current = model.simulate(s, w, t)
-
-        neurons_high_current = np.where(total_current > 1)
-        print("These neurons have a high current: ", neurons_high_current)
-        print("Spiketrain")
-        print(s)
-
-        print("--------------")
+        for t in range(timesteps):
+            total_current = model.simulate(s, w, t)
+            print("Spiketrain:", s)
