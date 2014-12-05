@@ -7,7 +7,7 @@ def eps(s, t_current, t_membran):
 
 def plot_eps(ax, t_current, t_membran):
     x = linspace(0, 500, num=1000)
-    print t_current, t_membran
+    print(t_current, t_membran)
     if t_current != t_membrane and t_current != 0 and t_membran != 0:
         ax.plot(x, eps(x, t_current, t_membran), label='C = %d, M = %d' % (t_current, t_membran))
         #ax.set_title('title')

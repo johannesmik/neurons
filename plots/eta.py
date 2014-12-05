@@ -14,7 +14,7 @@ def eta(s, nu_reset, t_membran):
 
 def plot_eta(ax, nu_reset, t_membran):
     x = linspace(-100, 500, num=601)
-    print nu_reset, t_membran
+    print(nu_reset, t_membran)
     if t_membran != 0:
 
         labelstr = ''
