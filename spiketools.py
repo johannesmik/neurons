@@ -58,7 +58,7 @@ def plot(spiketrain):
     plt.show()
 
 
-class WeightPlotter:
+class WeightPlotAnimation:
     def __init__(self, save_interval):
         self.save_interval = save_interval
         self.weights = []
