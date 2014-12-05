@@ -2,12 +2,9 @@ __author__ = 'johannes'
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import cm
 
-import cProfile
 import spiketools
 import spiking
-import simulation
 import stdp
 
 timesteps = 5000
