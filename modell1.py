@@ -3,7 +3,7 @@ __author__ = 'johannes'
 import numpy as np
 import matplotlib.pyplot as plt
 
-import spiketools
+import tools
 import spiking
 import stdp
 
@@ -39,15 +39,15 @@ spikes = np.zeros((neurons, timesteps), dtype=bool)
 
 # Generate some spikes in the input layer
 for i in range(neurons_input):
-    spikes[i] = spiketools.sound(timesteps, 20 * i, 0.4, 50)
+    spikes[i] = tools.sound(timesteps, 20 * i, 0.4, 50)
     spikes[i + neurons_input, 20 * i - 5:20 * i + 5] = True
 
 for i in range(neurons_input - 1, -1, -1):
-    spikes[i] = spikes[i] + spiketools.sound(timesteps, neurons_input * 20 + 20 * i, 0.4, 50)
+    spikes[i] = spikes[i] + tools.sound(timesteps, neurons_input * 20 + 20 * i, 0.4, 50)
     spikes[i + neurons_input, neurons_input * 20 + 20 * i - 5: neurons_input * 20 + 20 * i + 5] = True
 
 # Weight plot
-weightplotter = spiketools.WeightPlotter(save_interval=20)
+weightplotter = tools.WeightPlotter(save_interval=20)
 weightplotter.add(weights)
 
 for t in range(timesteps):
@@ -65,8 +65,8 @@ for t in range(timesteps):
 
 # weightplotter.plot_weights()
 
-spiketools.plot_current(spiking_model.v_plot)
-spiketools.plot_spikes(spikes)
-spiketools.plot_psth(spikes, neuron_indices=[0, 50, 190, 260, 300, 350])
+tools.plot_current(spiking_model.v_plot)
+tools.plot_spikes(spikes)
+tools.plot_psth(spikes, neuron_indices=[0, 50, 190, 260, 300, 350])
 
-spiketools.show_plots()
+tools.show_plots()
