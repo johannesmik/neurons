@@ -7,7 +7,7 @@ import spiketools
 import spiking
 import stdp
 
-timesteps = 5000
+timesteps = 12000
 
 neurons_input = 180
 neurons_output = 180
@@ -47,7 +47,7 @@ for i in range(neurons_input - 1, -1, -1):
     spikes[i + neurons_input, neurons_input * 20 + 20 * i - 5: neurons_input * 20 + 20 * i + 5] = True
 
 # Weight plot
-weightplotter = spiketools.WeightPlotAnimation(save_interval=20)
+weightplotter = spiketools.WeightPlotter(save_interval=20)
 weightplotter.add(weights)
 
 for t in range(timesteps):
@@ -63,9 +63,10 @@ for t in range(timesteps):
     # Reset output layer weights
     weights[neurons_input:, neurons_input:] = weights_output
 
-weightplotter.plot_weights()
+# weightplotter.plot_weights()
 
-plt.imshow(spiking_model.v_plot, vmin=np.min(spiking_model.v_plot), vmax=np.max(spiking_model.v_plot),
-           cmap=plt.cm.autumn)
-
+spiketools.plot_current(spiking_model.v_plot)
+spiketools.plot_spikes(spikes)
 spiketools.plot_psth(spikes, neuron_indices=[0, 50, 190, 260, 300, 350])
+
+spiketools.show_plots()
