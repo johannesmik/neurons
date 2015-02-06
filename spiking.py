@@ -4,11 +4,12 @@ __author__ = 'johannes'
 import numpy as np
 import functools
 
-
 class SRM:
     def __init__(self, neurons, threshold, t_current, t_membrane, nu_reset, simulation_window_size=100, verbose=False):
         """
         SRM_0 (Spike Response Model)
+
+        Neurons can have different t_current, t_membrane and nu_resets: Set those variables to 1D np.arrays of all the same size.
 
         :param neurons: Number of neurons
         :param threshold: Spiking threshold
@@ -37,13 +38,14 @@ class SRM:
         return (1/(1-self.t_current/self.t_membrane))*(np.exp(-spikes/self.t_membrane) - np.exp(-spikes/self.t_current))
 
     @functools.lru_cache()
-    def eps_vector(self, k, size):
-        vector = np.zeros(size, dtype=float)
+    def eps_matrix(self, k, size):
+
+        matrix = np.zeros((neurons, size), dtype=float)
 
         for i in range(k):
-            vector[i] = self.eps(k-i)
+            matrix[:, i] = self.eps(k-i)
 
-        return vector
+        return matrix
 
     def simulate(self, spikes, weights, t):
         """
@@ -61,11 +63,11 @@ class SRM:
 
         neurons, timesteps = s_t.shape
 
-        epsilon = self.eps_vector(min(self.simulation_window_size, t), timesteps)
+        epsilon_matrix = self.eps_matrix(min(self.simulation_window_size, t), timesteps)
 
         # Calculate current
         incoming_spikes = np.dot(weights.T, s_t)
-        incoming_current = np.dot(incoming_spikes, epsilon)
+        incoming_current = incoming_spikes * epsilon_matrix
         total_current = self.eta(np.ones(neurons)*t - self.last_spike) + incoming_current
 
         # Any new spikes?
@@ -93,8 +95,7 @@ class Izhikevich:
 
      http://www.izhikevich.org/publications/spikes.htm
     """
-    # TODO this model looks wrong, look at it, and fix it
-    # We receive far to less output spikes!
+    # TODO this model looks wrong, because we receive far to less output spikes!
     def __init__(self, neurons, a, b, c, d, v0=-65, threshold=30, verbose=False):
         """
 
