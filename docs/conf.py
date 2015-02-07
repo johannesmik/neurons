@@ -11,6 +11,12 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+# Mock imports, so that readthedocs can import them
+import mock
+MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot']
+for mod_name in MOCK_MODULES:
+sys.modules[mod_name] = mock.Mock()
+
 import sys, os
 
 # If extensions (or modules to document with autodoc) are in another directory,
