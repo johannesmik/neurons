@@ -1,3 +1,0 @@
-numpy
-numpydoc
-matplotlib
