@@ -13,6 +13,7 @@
 
 # Mock imports, so that readthedocs can import them
 import mock
+import sys
 MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
