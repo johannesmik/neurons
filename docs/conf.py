@@ -11,14 +11,24 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-# Mock imports, so that readthedocs can import them
-import mock
-import sys
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'pylab', 'matplotlib.animation']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
 
 import sys, os
+
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    # Mock imports, so that readthedocs can import them
+    import mock
+    MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'pylab', 'matplotlib.animation']
+    for mod_name in MOCK_MODULES:
+        sys.modules[mod_name] = mock.Mock()
+    
+else:
+    html_theme = 'default'
+    
+# My options
+autoclass_content = 'both'
+    
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -44,7 +54,7 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'contents'
 
 # General information about the project.
 project = u'Neurons'
@@ -95,10 +105,6 @@ pygments_style = 'sphinx'
 
 
 # -- Options for HTML output ---------------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
