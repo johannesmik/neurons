@@ -9,6 +9,7 @@ Some words...
     linux
     windows
     srm_network
+    visualizing
 
 .. seealso::
 
