@@ -1,9 +1,9 @@
 Tutorial: Your first SRM network
 ================================
 
-.. rubric:: In this first tutorial we let three SRM neurons spike
+In this first tutorial we let three SRM neurons spike.
 
-We define the spike train
+There are two input neurons with predefined spikes, and they will excite one output neuron.
 
 
 What do neurons do?
@@ -34,7 +34,7 @@ The SRM (Spike-response model) is a model for neurons. New spikes are generated 
 
 .. code-block:: python
 
-    srm_model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5)
+    model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5)
 
 This sets up a model of *3 neurons*. A neuron generates a new spike if it exceeds a current of 1mV. The variables
 t_current, t_membrane are time constants used in the SRM model, and nu_reset resets the current after a spike (repolarization).
@@ -84,8 +84,8 @@ So let's define some spikes for our neurons:
                            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
 
-This matrix means that the first neuron spikes at times of 0ms, 6ms and 7ms, and that the second neuron spikes at
-times of 2ms, 6ms and 7ms.
+This matrix means that the first neuron spikes at times of 2ms, 6ms and 7ms, and that the second neuron spikes at
+times of 0ms, 6ms and 7ms.
 
 For the third neuron,  we didn't define any spikes at all. We expect that it will spike during the simulation.
 
@@ -141,7 +141,7 @@ Here you can see the whole source code for our little SRM network:
     import numpy as np
     import neurons.spiking as spiking
 
-    srm_model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5)
+    model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5)
 
     weights = np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
 
