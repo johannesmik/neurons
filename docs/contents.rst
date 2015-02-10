@@ -6,6 +6,7 @@ Neurons' documentation table of contents
 
 
 .. toctree::
+    :hidden:
     :maxdepth: 3
 
     index

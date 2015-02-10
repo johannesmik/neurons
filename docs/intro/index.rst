@@ -1,7 +1,7 @@
 Getting started
 ===============
 
-Some words...
+Get started using the installation guides and the tutorials.
 
 .. toctree::
     :maxdepth: 1
@@ -10,7 +10,3 @@ Some words...
     windows
     srm_network
     visualizing
-
-.. seealso::
-
-    Some kind words...

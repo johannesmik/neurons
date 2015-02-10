@@ -61,3 +61,12 @@ Used open-source projects:
     `numpy <http://numpy.org/>`_ |
     `matplotlib <http://matplotlib.org/>`_ |
     `sphinx <http://sphinx-doc.org/>`_
+
+
+.. toctree::
+    :hidden:
+    :maxdepth: 3
+
+    intro/index
+    topics/index
+    reference/index

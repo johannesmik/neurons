@@ -18,11 +18,11 @@ Change into the directory, and run the install script
 
 ::
 
-    $ cd neurons
+    $ cd neurons-master
     $ python3 setup.py install --user
 
 .. note::
-    This copies all needed data into  `.local` in your home directory..
+    This copies all needed data into  `.local` in your home directory.
 
 Now you can test if you can import the *neurons* package:
 
@@ -70,6 +70,4 @@ This shouldn't lead to any error messages. Congratulations, you are done.
 Feedback
 --------
 
-The installation does not work?
-
-Please write a :doc:`bug report<../topics/bug_report>`.
+The installation does not work? Please write a :doc:`bug report<../topics/bug_report>`.
