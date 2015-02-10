@@ -6,16 +6,16 @@ import functools
 
 class SRM:
     """ SRM_0 (Spike Response Model) """
-    def __init__(self, neurons, threshold, t_current, t_membrane, nu_reset, simulation_window_size=100, verbose=False):
+    def __init__(self, neurons, threshold, t_current, t_membrane, eta_reset, simulation_window_size=100, verbose=False):
         """
-        Neurons can have different t_current, t_membrane and nu_resets: Set those variables to 1D np.arrays of all the same size.
+        Neurons can have different t_current, t_membrane and eta_resets: Set those variables to 1D np.arrays of all the same size.
 
         :param neurons: Number of neurons
         :param threshold: Spiking threshold
         :param t_current: Current-time-constant (:math:`t_s`)
         :type t_current: Float or Numpy Float Array
         :param t_membrane: Membrane-time-constant (t_m)
-        :param nu_reset: Reset constant
+        :param eta_reset: Reset constant
         :param simulation_window_size: Only look at the n last spikes
         :param verbose:
         :return: ``None``
@@ -28,14 +28,14 @@ class SRM:
         self.threshold = threshold
         self.t_current = t_current
         self.t_membrane = t_membrane
-        self.nu_reset = nu_reset
+        self.eta_reset = eta_reset
         self.simulation_window_size = simulation_window_size
         self.verbose = verbose
         self.last_spike = np.ones(self.neurons, dtype=float) * -1000000
         self.v_plot = np.empty((neurons, 0))
 
     def eta(self, spikes):
-        return - self.nu_reset*np.exp(-spikes/self.t_membrane)
+        return - self.eta_reset*np.exp(-spikes/self.t_membrane)
 
     @functools.lru_cache()
     def eps(self, s):
@@ -75,12 +75,12 @@ class SRM:
     def simulate(self, spikes, weights, t):
         """
         Simulate one time step at time t. Changes the spiketrain in place at time t!
-        Return the total current of all neurons.
+        Return the total membrane potential of all neurons.
 
         :param spikes: Spiketrain (Time indexing begins with 0)
         :param weights: Weights
         :param t: Evaluation time
-        :return: total current of all neurons at time step t (vector), spikes at time t
+        :return: total membrane potential of all neurons at time step t (vector), spikes at time t
         """
 
         # Check correct user input
@@ -115,11 +115,11 @@ class SRM:
 
         # Calculate current
         incoming_spikes = np.dot(weights.T, s_t)
-        incoming_current = np.sum(incoming_spikes * epsilon_matrix, axis=1)
-        total_current = self.eta(np.ones(neurons)*t - self.last_spike) + incoming_current
+        incoming_potential = np.sum(incoming_spikes * epsilon_matrix, axis=1)
+        total_potential = self.eta(np.ones(neurons)*t - self.last_spike) + incoming_potential
 
         # Any new spikes?
-        neurons_high_current = np.where(total_current > self.threshold)
+        neurons_high_current = np.where(total_potential > self.threshold)
         spikes[neurons_high_current, t] = True
 
         # Update last_spike
@@ -128,17 +128,17 @@ class SRM:
 
         if self.verbose:
             print("SRM Time step", t)
-            print("Incoming current", incoming_current)
-            print("Total current", total_current)
+            print("Incoming current", incoming_potential)
+            print("Total potential", total_potential)
             print("Last spike", self.last_spike)
             print("")
 
-        self.v_plot = np.hstack((self.v_plot, total_current.reshape(neurons, 1)))
+        self.v_plot = np.hstack((self.v_plot, total_potential.reshape(neurons, 1)))
 
-        return total_current
+        return total_potential
 
 class SRM_X(SRM):
-    def __init__(self, neurons, threshold, t_current, t_membrane, nu_reset, ax_delay, simulation_window_size=100, verbose=False):
+    def __init__(self, neurons, threshold, t_current, t_membrane, eta_reset, ax_delay, simulation_window_size=100, verbose=False):
         """
         Like the SRM model, but additionally it supports axonal delays.
 
@@ -147,7 +147,7 @@ class SRM_X(SRM):
         :param t_current: Current-time-constant (:math:`t_s`)
         :type t_current: Float or Numpy Float Array
         :param t_membrane: Membrane-time-constant (t_m)
-        :param nu_reset: Reset constant
+        :param eta_reset: Reset constant
         :param ax_delay: Axonal delays
         :param simulation_window_size: Only look at the n last spikes
         :param verbose:
@@ -157,7 +157,7 @@ class SRM_X(SRM):
         # Check user input
         # TODO
 
-        SRM.__init__(self, neurons, threshold, t_current, t_membrane, nu_reset, simulation_window_size=simulation_window_size,
+        SRM.__init__(self, neurons, threshold, t_current, t_membrane, eta_reset, simulation_window_size=simulation_window_size,
                      verbose=verbose)
 
         self.ax_delay = ax_delay
@@ -245,7 +245,7 @@ class Izhikevich:
 
 if __name__ == "__main__":
 
-    srm_model = SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5, verbose=True)
+    srm_model = SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, eta_reset=5, verbose=True)
     izhikevich_model = Izhikevich(neurons=3, a=0.02, b=0.2, c=-65, d=8, threshold=30, verbose=True)
 
     models = [srm_model, izhikevich_model]
