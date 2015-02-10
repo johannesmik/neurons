@@ -10,6 +10,5 @@ setup(name='neurons',
       author='Johannes Mikulasch',
       url='http://github.com/johannesmik/neurons',
       license='BSD',
-      package_dir={'neurons': ''},
       packages=['neurons']
       )

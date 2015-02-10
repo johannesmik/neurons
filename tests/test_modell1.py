@@ -1,12 +1,10 @@
+from neurons import tools, spiking, learning, plotting
+
 __author__ = 'johannes'
 
 import numpy as np
 import pytest
 
-import tools
-import spiking
-import learning
-import plotting
 
 @pytest.mark.skipif(True, reason="Takes too long")
 def test_modell():

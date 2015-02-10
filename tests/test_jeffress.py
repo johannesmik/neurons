@@ -2,13 +2,12 @@
 In this test we create a simple Jeffress model.
 """
 
-import pytest
 import numpy as np
 
-import learning
-import spiking
-import tools
-import plotting
+from neurons import spiking
+from neurons import plotting
+from neurons import tools
+
 
 def test_jeffress():
     neurons = 11

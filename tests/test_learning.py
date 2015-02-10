@@ -1,6 +1,7 @@
+from neurons import learning
+
 __author__ = 'johannes'
 
-import learning
 import pytest
 import numpy as np
 
