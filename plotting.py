@@ -240,6 +240,9 @@ class CurrentPlot:
         plt.show(block=False)
         self.fig = fig
 
+def show():
+    plt.show()
+
 if __name__ == '__main__':
     c = CurrentPlot(3)
     c.add(np.array([1, 5, 4]))
