@@ -1,6 +1,6 @@
 .. _index:
 
-Welcome to Neurons's documentation!
+Welcome to Neurons' documentation!
 ===================================
 
 .. rubric:: *Neurons* is a simple simulation tool for neurons.
@@ -8,9 +8,10 @@ Welcome to Neurons's documentation!
 It currently supports the **SRM** model for calculating spike trains,
 and the **STDP** model for learning synaptic weights.
 
-It is licensed under the BSD-2-Clause License, the source code being freely available at Github_.
+It originated from a student project at the `Chair for Theoretical Biophysics at TU München`_ in summer term 2014.
 
-.. _Github: https://github.com/johannesmik/neurons
+.. _Chair for Theoretical Biophysics at TU München: http://www.t35.physik.tu-muenchen.de/
+
 
 First steps
 -----------
