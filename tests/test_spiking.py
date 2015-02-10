@@ -12,7 +12,7 @@ class TestVarious:
         timesteps = 20
         # Two neurons
         spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,
-                                    t_membrane=20, nu_reset=5, verbose=False)
+                                    t_membrane=20, eta_reset=5, verbose=False)
 
         # Neuron 1 is connected to Neuron 2 with weight 1
         weights = np.array([[0, 1], [0, 0]])
@@ -30,7 +30,7 @@ class TestVarious:
         timesteps = 20
         # Two neurons
         spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,
-                                    t_membrane=20, nu_reset=5, verbose=False)
+                                    t_membrane=20, eta_reset=5, verbose=False)
 
         # Neuron 1 is connected to Neuron 2 with weight -1
         weights = np.array([[0, -1], [0, 0]])
@@ -52,7 +52,7 @@ class TestVarious:
         timesteps = 20
         # Two neurons
         spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,
-                                    t_membrane=20, nu_reset=5, verbose=False)
+                                    t_membrane=20, eta_reset=5, verbose=False)
 
         # Neuron 1 is connected to Neuron 2 with weight 1
         weights = np.array([[0, 1], [0, 0]], dtype=bool)
@@ -78,7 +78,7 @@ class TestShouldFail:
     def test_wrong_spiketrain_size(self):
 
         spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,
-                                    t_membrane=20, nu_reset=5, verbose=False)
+                                    t_membrane=20, eta_reset=5, verbose=False)
 
         # Empty spiketrain is too short
         spiketrain1 = np.zeros((2, 20))
@@ -92,7 +92,7 @@ class TestShouldFail:
 
     def test_simulate_wrong_types(self):
         spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,
-                                    t_membrane=20, nu_reset=5, verbose=False)
+                                    t_membrane=20, eta_reset=5, verbose=False)
 
         spiketrain1 = np.zeros((2, 21))
         weights = np.array([[0, 1], [0, 0]], dtype=bool)
@@ -112,7 +112,7 @@ class TestShouldFail:
 
     def test_wrong_weight_size(self):
         spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,
-                                    t_membrane=20, nu_reset=5, verbose=False)
+                                    t_membrane=20, eta_reset=5, verbose=False)
 
         spiketrain1 = np.zeros((2, 21))
 
@@ -126,7 +126,7 @@ class TestShouldFail:
     def test_wrong_time_too_small(self):
         # Simulate a time that is too small
         spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,
-                                    t_membrane=20, nu_reset=5, verbose=False)
+                                    t_membrane=20, eta_reset=5, verbose=False)
 
         spiketrain1 = np.zeros((2, 20))
 
@@ -142,4 +142,4 @@ class TestShouldFail:
         # 3 Neurons, 3 different t_s, but only 2 different t_m
         with pytest.raises(ValueError) as e:
             spiking_model = spiking.SRM(neurons=3, threshold=1.0, t_current=[0.3, 0.2, 0.3],
-                                    t_membrane=[0.2, 0.5], nu_reset=[0.5, 0.5, 0.6], verbose=False)
+                                    t_membrane=[0.2, 0.5], eta_reset=[0.5, 0.5, 0.6], verbose=False)
