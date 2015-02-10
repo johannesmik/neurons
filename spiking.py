@@ -5,21 +5,25 @@ import numpy as np
 import functools
 
 class SRM:
+    """ SRM_0 (Spike Response Model) """
     def __init__(self, neurons, threshold, t_current, t_membrane, nu_reset, simulation_window_size=100, verbose=False):
         """
-        SRM_0 (Spike Response Model)
-
         Neurons can have different t_current, t_membrane and nu_resets: Set those variables to 1D np.arrays of all the same size.
 
         :param neurons: Number of neurons
         :param threshold: Spiking threshold
-        :param t_current: Current-time-constant (t_s)
+        :param t_current: Current-time-constant (:math:`t_s`)
+        :type t_current: Float or Numpy Float Array
         :param t_membrane: Membrane-time-constant (t_m)
         :param nu_reset: Reset constant
         :param simulation_window_size: Only look at the n last spikes
         :param verbose:
-        :return:
+        :return: ``None``
         """
+
+        # Check user input
+        # TODO
+
         self.neurons = neurons
         self.threshold = threshold
         self.t_current = t_current
@@ -34,13 +38,34 @@ class SRM:
         return - self.nu_reset*np.exp(-spikes/self.t_membrane)
 
     @functools.lru_cache()
-    def eps(self, spikes):
-        return (1/(1-self.t_current/self.t_membrane))*(np.exp(-spikes/self.t_membrane) - np.exp(-spikes/self.t_current))
+    def eps(self, s):
+        r"""
+        Evaluate the Epsilon function:
+
+        .. math:: \epsilon (s) =  \frac{1}{1 - \frac{\tau_c}{\tau_m}} (\exp(\frac{s}{\tau_m}) - \exp(\frac{-s}{\tau_c}))
+            :label: epsilon
+
+        Returns a single Float Value if the time constants (current, membrane) are the same for each neuron.
+        Returns a Float Vector with eps(s) for each neuron, if the time constants are different for each neuron.
+
+        :param s: Time s
+        :return: Function eps(s) at time s
+        :rtype: Float or Vector of Floats
+        """
+        return (1/(1-self.t_current/self.t_membrane))*(np.exp(-s/self.t_membrane) - np.exp(-s/self.t_current))
 
     @functools.lru_cache()
     def eps_matrix(self, k, size):
+        """
+        **Examples**:
+        Test
 
-        matrix = np.zeros((neurons, size), dtype=float)
+        :param k:
+        :param size:
+        :return:
+        """
+
+        matrix = np.zeros((self.neurons, size), dtype=float)
 
         for i in range(k):
             matrix[:, i] = self.eps(k-i)
@@ -52,11 +77,34 @@ class SRM:
         Simulate one time step at time t. Changes the spiketrain in place at time t!
         Return the total current of all neurons.
 
-        :param spikes: Spiketrain
+        :param spikes: Spiketrain (Time indexing begins with 0)
         :param weights: Weights
         :param t: Evaluation time
-        :return: total current of all neurons at time step t (vector)
+        :return: total current of all neurons at time step t (vector), spikes at time t
         """
+
+        # Check correct user input
+
+        if type(spikes) != np.ndarray:
+            raise ValueError("Spiketrain should be a numpy array")
+
+        if type(weights) != np.ndarray:
+            raise ValueError("Weights should be a numpy matrix")
+
+        try: t = int(t)
+        except: raise ValueError("Variable t should be int or convertible to int")
+
+        if t < 0:
+            raise ValueError("Time to be simulated is too small")
+
+        if t >= spikes.shape[1]:
+            raise ValueError("Spiketrain too short (0ms -- %dms) for simulating time %d" % (spikes.shape[1]-1, t))
+
+        if weights.shape[0] != self.neurons or self.neurons != weights.shape[1]:
+            raise ValueError("Weigths should be a quadratic matrix, with one row and one column for each neuron")
+
+        if spikes.shape[0] != self.neurons:
+            raise ValueError("Spikes should be a matrix, with one row for each neuron")
 
         # Work on a windowed view
         s_t = spikes[:, max(0, t+1-self.simulation_window_size):t+1]
@@ -67,7 +115,7 @@ class SRM:
 
         # Calculate current
         incoming_spikes = np.dot(weights.T, s_t)
-        incoming_current = incoming_spikes * epsilon_matrix
+        incoming_current = np.sum(incoming_spikes * epsilon_matrix, axis=1)
         total_current = self.eta(np.ones(neurons)*t - self.last_spike) + incoming_current
 
         # Any new spikes?
@@ -109,6 +157,7 @@ class Izhikevich:
         :param verbose:
         :return:
         """
+        print("The Izhikevich model hasn't been tested yet -- use with care")
         self.a = a * np.ones((neurons, 1))
         self.b = b * np.ones((neurons, 1))
         self.c = c * np.ones((neurons, 1))
@@ -163,13 +212,14 @@ if __name__ == "__main__":
         elif isinstance(model, Izhikevich):
             print('Demonstration of the Izhikevich Model')
 
-        s = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0],
-                      [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+        s = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
+                      [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
 
         w = np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
         neurons, timesteps = s.shape
 
         for t in range(timesteps):
             total_current = model.simulate(s, w, t)
-            print("Spiketrain:", s)
+            print("Spiketrain:")
+            print(s)
