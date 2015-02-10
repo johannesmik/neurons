@@ -1,6 +1,6 @@
 __author__ = 'johannes'
 
-import stdp
+import learning
 import pytest
 import numpy as np
 
@@ -51,12 +51,12 @@ def weights(request):
 
 @pytest.fixture(scope="module")
 def learning_model_empty():
-    model = stdp.STDP(eta=0.0, w_in=0.0, w_out=0.0, tau=0.0, window_size=5)
+    model = learning.STDP(eta=0.0, w_in=0.0, w_out=0.0, tau=0.0, window_size=5)
     return model
 
 @pytest.fixture(scope="module")
 def learning_model_standard():
-    model = stdp.STDP(eta=0.05, w_in=0.5, w_out=0.5, tau=10.0, window_size=5)
+    model = learning.STDP(eta=0.05, w_in=0.5, w_out=0.5, tau=10.0, window_size=5)
     return model
 
 @pytest.fixture(scope="module", params=[learning_model_empty, learning_model_standard])
@@ -99,7 +99,7 @@ class TestSimpleChanges:
 
         # Update weights by the model
         epsilon = np.finfo(float).eps
-        model = stdp.STDP(eta=1., w_in=0., w_out=1., tau=epsilon, window_size=5, verbose=True)
+        model = learning.STDP(eta=1., w_in=0., w_out=1., tau=epsilon, window_size=5, verbose=True)
         model.weight_change(spiketrain, weights, timesteps)
 
         assert np.array_equal(suggested_weights, weights)
@@ -115,7 +115,7 @@ class TestSimpleChanges:
 
         # Update weights by the model
         epsilon = np.finfo(float).eps
-        model = stdp.STDP(eta=1., w_in=1., w_out=0., tau=epsilon, window_size=5)
+        model = learning.STDP(eta=1., w_in=1., w_out=0., tau=epsilon, window_size=5)
         model.weight_change(spiketrain, weights, timesteps)
 
         assert np.array_equal(suggested_weights, weights)
@@ -142,7 +142,7 @@ class TestPrecalculatedExample:
         cls.weights = np.array([[0, 1],
                                 [0, 0]], dtype=float)
         cls.simulation_started = False
-        cls.model = stdp.STDP(eta=1, w_in=0.5, w_out=-0.5, tau=5., window_size=10)
+        cls.model = learning.STDP(eta=1, w_in=0.5, w_out=-0.5, tau=5., window_size=10)
 
 
 
