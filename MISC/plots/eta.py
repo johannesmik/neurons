@@ -5,11 +5,11 @@ Show plots of the eta function for different
 import numpy as np
 import matplotlib.pyplot as plt
 
-def eta(s, nu_reset, t_membran):
+def eta(s, eta_reset, t_membran):
 
     ret = np.zeros(s.size)
 
-    ret = - nu_reset * np.exp(-s/t_membran)
+    ret = - eta_reset * np.exp(-s/t_membran)
 
     ret[s < 0] = 0
     ret[s == 0] = 0.9 # Spike
