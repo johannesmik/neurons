@@ -29,7 +29,8 @@ Read this if you are new to the project.
 * **Topics:**
     :doc:`Project Overview <topics/overview>` |
     :doc:`Spiking <topics/spiking>` |
-    :doc:`Learning <topics/learning>`
+    :doc:`Learning <topics/learning>` |
+    :doc:`Jeffress Model <topics/jeffress>`
 
 * **Contribute:**
     :doc:`Write Bug Reports <topics/bug_report>` |
@@ -67,6 +68,7 @@ Used open-source projects:
     :hidden:
     :maxdepth: 3
 
+    contents
     intro/index
     topics/index
     reference/index

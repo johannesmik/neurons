@@ -7,6 +7,7 @@ Advanced Topics
     overview
     spiking
     learning
+    jeffress
     bug_report
     feature_request
     extending

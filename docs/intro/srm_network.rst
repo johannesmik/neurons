@@ -30,14 +30,14 @@ First thing we have to do is to import all the libraries we need:
 Setting up the SRM model
 ------------------------
 
-The SRM (Spike-response model) is a model for neurons. New spikes are generated if the incoming current exceeds a certain threshold.
+The SRM (Spike-response model) is a model for neurons. New spikes are generated if the incoming current leads the membrane potential to exceed a certain threshold.
 
 .. code-block:: python
 
     model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5)
 
-This sets up a model of *3 neurons*. A neuron generates a new spike if it exceeds a current of 1mV. The variables
-t_current, t_membrane are time constants used in the SRM model, and nu_reset resets the current after a spike (repolarization).
+This sets up a model of *3 neurons*. A neuron generates a new spike if it exceeds the threshold of 1mV. The variables
+t_current, t_membrane are time constants used in the SRM model, and nu_reset resets the membrane potential after a spike (repolarization).
 
 .. note::
     We can say here, that the values are not 'realistic.' This is because our SRM implementation assumes a resting potential
@@ -97,11 +97,11 @@ We prepared the SRM neurons, a spiketrain, and the inter-neural weights, so we a
 .. code-block:: python
 
     for time in range(10):
-        total_current = model.simulate(spiketrain, weights, time)
+        total_potential = model.simulate(spiketrain, weights, time)
 
-Simulate(spiketrain, weights, time) calculates the current at a time t. It checks if any spikes occured, and accordingly changes the spiketrain array in-place.
+Simulate(spiketrain, weights, time) calculates the membrane potential at a time t. It checks if any spikes occurred, and accordingly changes the spiketrain array in-place.
 
-In the for-loop we calculate the current and maybe generate new spikes for every time from 0ms -- 9ms.
+In the for-loop we calculate the membrane potential (and if exceeding the threshold generating new spikes) for every time from 0ms -- 9ms.
 
 Enjoy the result
 ----------------
@@ -150,7 +150,7 @@ Here you can see the whole source code for our little SRM network:
                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
 
     for time in range(10):
-        total_current = model.simulate(spiketrain, weights, time)
+        total_potential = model.simulate(spiketrain, weights, time)
 
     print("Spiketrain:")
     print(spiketrain)
