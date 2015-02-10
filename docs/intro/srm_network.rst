@@ -25,7 +25,7 @@ First thing we have to do is to import all the libraries we need:
 .. code-block:: python
 
     import numpy as np
-    import neurons.spiking as spiking
+    from neurons import spiking
 
 Setting up the SRM model
 ------------------------
@@ -139,7 +139,7 @@ Here you can see the whole source code for our little SRM network:
 .. code-block:: python
 
     import numpy as np
-    import neurons.spiking as spiking
+    from neurons import spiking
 
     model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5)
 

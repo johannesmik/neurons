@@ -12,7 +12,7 @@ First install the requirements:
 
     $ sudo apt-get install python3 python3-numpy python3-matplotlib
 
-Next, download and unzip the `zip-package <https://github.com/johannesmik/neurons/archive/master.zip>`_.
+Next, download and unzip the `newest release<https://github.com/johannesmik/neurons/releases>`_.
 
 Change into the directory, and run the install script
 

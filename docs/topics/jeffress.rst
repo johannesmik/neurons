@@ -55,9 +55,7 @@ First, we import all required modules.
     import numpy as np
     import matplotlib.pyplot as plt
 
-    import neurons.learning as learning
-    import neurons.spiking as spiking
-    import neurons.plotting as plotting
+    from neurons import learning, spiking, plotting
 
 Now we define how many neurons we have and how many timesteps we want to simulate:
 

@@ -11,7 +11,7 @@ First install the requirements:
 
 You can also use pre-packaged distributions like `Anaconda <http://continuum.io/downloads#py34>`_.
 
-Next, download and unzip the `zip-package <https://github.com/johannesmik/neurons/archive/master.zip>`_ into a convenient location.
+Next, download and unzip the `newest realease<https://github.com/johannesmik/neurons/releases>`_ into a convenient location.
 
 Open a terminal (Shortcut: `Windows + R`). Change into the directory you just unzipped and run the install script
 
