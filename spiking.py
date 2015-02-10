@@ -42,7 +42,7 @@ class SRM:
         r"""
         Evaluate the Epsilon function:
 
-        .. math:: \epsilon (s) =  \frac{1}{1 - \frac{\tau_c}{\tau_m}} (\exp(\frac{s}{\tau_m}) - \exp(\frac{-s}{\tau_c}))
+        .. math:: \epsilon (s) =  \frac{1}{1 - \frac{\tau_c}{\tau_m}} (\exp(\frac{-s}{\tau_m}) - \exp(\frac{-s}{\tau_c}))
             :label: epsilon
 
         Returns a single Float Value if the time constants (current, membrane) are the same for each neuron.
@@ -136,6 +136,51 @@ class SRM:
         self.v_plot = np.hstack((self.v_plot, total_current.reshape(neurons, 1)))
 
         return total_current
+
+class SRM_X(SRM):
+    def __init__(self, neurons, threshold, t_current, t_membrane, nu_reset, ax_delay, simulation_window_size=100, verbose=False):
+        """
+        Like the SRM model, but additionally it supports axonal delays.
+
+        :param neurons: Number of neurons
+        :param threshold: Spiking threshold
+        :param t_current: Current-time-constant (:math:`t_s`)
+        :type t_current: Float or Numpy Float Array
+        :param t_membrane: Membrane-time-constant (t_m)
+        :param nu_reset: Reset constant
+        :param ax_delay: Axonal delays
+        :param simulation_window_size: Only look at the n last spikes
+        :param verbose:
+        :return: ``None``
+        """
+
+        # Check user input
+        # TODO
+
+        SRM.__init__(self, neurons, threshold, t_current, t_membrane, nu_reset, simulation_window_size=simulation_window_size,
+                     verbose=verbose)
+
+        self.ax_delay = ax_delay
+
+    def eps(self, s):
+        r"""
+        Evaluate the Epsilon function with an axonal delay :math:`\tau_d`.
+
+        .. math:: \epsilon (s) =  \frac{1}{1 - \frac{\tau_c}{\tau_m}} (\exp(\frac{-(s-\tau_d)}{\tau_m}) - \exp(\frac{-(s - \tau_d)}{\tau_c}))
+            :label: epsilon_axdelay
+
+        Returns a single Float Value if the time constants (current, membrane) are the same for each neuron.
+        Returns a Float Vector with eps(s) for each neuron, if the time constants are different for each neuron.
+
+        :param s: Time s
+        :return: Function eps(s) at time s
+        :rtype: Float or Vector of Floats
+        """
+        eps = (1/(1-self.t_current/self.t_membrane))*(np.exp(-(s - self.ax_delay)/self.t_membrane)
+                                                       - np.exp(- (s - self.ax_delay)/self.t_current))
+
+        eps[np.where(eps<0)] = 0
+        return eps
 
 class Izhikevich:
     """

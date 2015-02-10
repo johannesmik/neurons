@@ -27,7 +27,9 @@ class STDP:
 
     def learning_window_neuron_post(self, t1, t2_list):
         """
+
         Return the sum of the learning windows of one neuron.
+
         :param t1: current time
         :param t2_list: spiking times of neuron
         """

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 import tools
 import spiking
-import stdp
+import learning
 
 timesteps = 12000
 
@@ -16,7 +16,7 @@ neurons = neurons_input + neurons_output
 spiking_model = spiking.SRM(neurons=neurons, threshold=1.0, t_current=0.3,
                             t_membrane=20, nu_reset=5, verbose=False)
 
-learning_model = stdp.STDP(eta=0.05, w_in=0.0, w_out=-0.05, tau=10.0, window_size=5, verbose=False)
+learning_model = learning.STDP(eta=0.05, w_in=0.0, w_out=-0.05, tau=10.0, window_size=5, verbose=False)
 
 weights = np.zeros((neurons, neurons))
 

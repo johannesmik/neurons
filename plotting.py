@@ -214,4 +214,35 @@ class CurrentsHeatmapAnimation(HeatmapAnimation):
         :param currents:
         :return: None
         """
+        if len(currents.shape) == 1:
+            width = currents.shape[0]
+            currents = currents.reshape((1, width))
         self.values.append(currents.copy())
+
+class CurrentPlot:
+
+    def __init__(self, neurons):
+        self.values = np.empty((0, neurons))
+        self.fig = None
+
+    def add(self, currents):
+        if len(currents.shape) == 1:
+            width = currents.shape[0]
+            currents = currents.reshape((1, width))
+
+        self.values = np.append(self.values, currents.copy(), axis=0)
+
+    def show_plot(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(self.values)
+
+        plt.show(block=False)
+        self.fig = fig
+
+if __name__ == '__main__':
+    c = CurrentPlot(3)
+    c.add(np.array([1, 5, 4]))
+    c.add(np.array([2, 4, 4]))
+    c.show_plot()
+    plt.show()
