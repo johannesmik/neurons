@@ -4,13 +4,11 @@
 Neurons' documentation table of contents
 ========================================
 
-.. toctree::
-    :hidden:
-
-    index
 
 .. toctree::
     :maxdepth: 3
 
+    index
     intro/index
     topics/index
+    reference/index
