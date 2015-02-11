@@ -2,8 +2,8 @@ Project overview
 ================
 
 
-Two methods to rule them all
-----------------------------
+The two core methods
+--------------------
 
 At the very core of our simulations we only need two methods:
 
