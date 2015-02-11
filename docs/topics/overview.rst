@@ -5,7 +5,10 @@ Project overview
 Two methods to rule them all
 ----------------------------
 
-At the very core of our simulations we only need two methods: `check_spikes()` and `learn_weights()`.
+At the very core of our simulations we only need two methods:
+
+1. `check_spikes()`
+2. `learn_weights()`
 
 The first one, `check_spikes()`, checks if the neurons generate new spikes at a given time `t`.
 The second one, `learn_weights()`, updates the weights for a given spike train at time `t`.
