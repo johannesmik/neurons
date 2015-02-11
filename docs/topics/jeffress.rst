@@ -140,7 +140,11 @@ Extending the Network
 
 Of course this was only a toy example with 3 output neurons. In a future article we want to show a more complex network.
 
+The distribution of the delays and the correct mechanism of generating a delay is still a topic of active discussions. [SP2011]
+
 References
 ----------
 
 .. [JEF1948] Jeffress L A, 1948, A place theory of sound localization," J Comp Physiol Psychol 41, 35-39.
+
+.. [SP2011] Scholarpedia `<Jeffress Model http://www.scholarpedia.org/article/Jeffress_model>`_

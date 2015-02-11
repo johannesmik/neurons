@@ -17,7 +17,7 @@ class SRM:
         :param t_membrane: Membrane-time-constant (t_m)
         :param eta_reset: Reset constant
         :param simulation_window_size: Only look at the n last spikes
-        :param verbose:
+        :param verbose: Print verbose output to the console
         :return: ``None``
         """
 
@@ -57,12 +57,21 @@ class SRM:
     @functools.lru_cache()
     def eps_matrix(self, k, size):
         """
-        **Examples**:
-        Test
 
-        :param k:
-        :param size:
-        :return:
+        Returns the epsilon helpermatrix.
+
+        :Example:
+
+        >>> eps_matrix(3, 5)
+        [[eps_0(3), eps_0(2), eps_0(1), eps_0(0), eps_0(0)],
+         [eps_1(3), eps_1(2), eps_1(1), eps_1(0), eps_1(0)]]
+
+        Where `eps_0(3)` means the epsilon function of neuron 0 at time 3.
+
+        :param k: Leftmost epsilon time
+        :param size: Width of the return matrix
+        :return: Epsilon helper matrix
+        :return type: Numpy Float Array, dimensions: (neurons x size)
         """
 
         matrix = np.zeros((self.neurons, size), dtype=float)
@@ -193,13 +202,14 @@ class Izhikevich:
         """
 
         :param neurons: total number of neurons
-        :param a:
-        :param b:
-        :param c:
-        :param d:
+        :param a: decay rate
+        :param b: sensitivity
+        :param c: reset
+        :param d: reset
         :param v0: Initial voltage
         :param threshold:
-        :param verbose:
+        :param verbose: Verbose output to console. Default: False.
+        :type verbose: Boolean
         :return:
         """
         print("The Izhikevich model hasn't been tested yet -- use with care")

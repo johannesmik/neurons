@@ -1,11 +1,16 @@
 """
-Spike Timing Dependent Plasticity
+This module contains classes that can learn the weights.
 """
 
 import numpy as np
 
 
 class STDP:
+
+    """
+    Spike Timing Dependent Plasticity
+    """
+
     def __init__(self, eta, w_in, w_out, tau, window_size, verbose=False):
         self.eta = eta
         self.w_in = w_in

@@ -192,11 +192,11 @@ class CurrentsHeatmapAnimation(HeatmapAnimation):
 
     ::
 
-    cha = CurrentsHeatmapAnimation()
-    for i in range(300):
-        cha.add(np.random.randn(1, 20))
-    cha.show_animation()
-    plt.show()
+        cha = CurrentsHeatmapAnimation()
+        for i in range(300):
+            cha.add(np.random.randn(1, 20))
+        cha.show_animation()
+        plt.show()
 
     """
 

@@ -1,14 +1,14 @@
 plotting.py
 ===========
 
-This module contains functions do create nice plots such as:
+This module contains functions to create nice plots such as:
 
 Example_plot 1
 
 Example_plot 2
 
-.. automodule:: plotting
+.. automodule:: neurons.plotting
     :members:
 
-    .. automethod:: __init__
+
 

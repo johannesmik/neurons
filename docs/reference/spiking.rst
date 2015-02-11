@@ -4,15 +4,12 @@ spiking.py
 SRM 0 model
 -----------
 
-.. autoclass:: spiking.SRM
+.. autoclass:: neurons.spiking.SRM
     :members:
 
-    .. automethod:: __init__
 
 Izhikevich model
 ----------------
 
-.. autoclass:: spiking.Izhikevich
+.. autoclass:: neurons.spiking.Izhikevich
     :members:
-
-    .. automethod:: __init__
