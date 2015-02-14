@@ -91,12 +91,12 @@ class SRM:
 
         return matrix
 
-    def simulate(self, spikes, weights, t):
+    def simulate(self, spiketrain, weights, t):
         """
         Simulate one time step at time t. Changes the spiketrain in place at time t!
         Return the total membrane potential of all neurons.
 
-        :param spikes: Spiketrain (Time indexing begins with 0)
+        :param spiketrain: Spiketrain (Time indexing begins with 0)
         :param weights: Weights
         :param t: Evaluation time
         :return: total membrane potential of all neurons at time step t (vector), spikes at time t
@@ -104,7 +104,7 @@ class SRM:
 
         # Check correct user input
 
-        if type(spikes) != np.ndarray:
+        if type(spiketrain) != np.ndarray:
             raise ValueError("Spiketrain should be a numpy array")
 
         if type(weights) != np.ndarray:
@@ -116,33 +116,33 @@ class SRM:
         if t < 0:
             raise ValueError("Time to be simulated is too small")
 
-        if t >= spikes.shape[1]:
-            raise ValueError("Spiketrain too short (0ms -- %dms) for simulating time %d" % (spikes.shape[1]-1, t))
+        if t >= spiketrain.shape[1]:
+            raise ValueError("Spiketrain too short (0ms -- %dms) for simulating time %d" % (spiketrain.shape[1]-1, t))
 
         if weights.shape[0] != self.neurons or self.neurons != weights.shape[1]:
             raise ValueError("Weigths should be a quadratic matrix, with one row and one column for each neuron")
 
-        if spikes.shape[0] != self.neurons:
+        if spiketrain.shape[0] != self.neurons:
             raise ValueError("Spikes should be a matrix, with one row for each neuron")
 
         # Work on a windowed view
-        s_t = spikes[:, max(0, t+1-self.simulation_window_size):t+1]
+        spiketrain_window = spiketrain[:, max(0, t+1-self.simulation_window_size):t+1]
 
-        neurons, timesteps = s_t.shape
+        neurons, timesteps = spiketrain_window.shape
 
         epsilon_matrix = self.eps_matrix(min(self.simulation_window_size, t), timesteps)
 
         # Calculate current
-        incoming_spikes = np.dot(weights.T, s_t)
+        incoming_spikes = np.dot(weights.T, spiketrain_window)
         incoming_potential = np.sum(incoming_spikes * epsilon_matrix, axis=1)
         total_potential = self.eta(np.ones(neurons)*t - self.last_spike) + incoming_potential
 
         # Any new spikes?
         neurons_high_current = np.where(total_potential > self.threshold)
-        spikes[neurons_high_current, t] = True
+        spiketrain[neurons_high_current, t] = True
 
         # Update last_spike
-        spiking_neurons = np.where(spikes[:, t])
+        spiking_neurons = np.where(spiketrain[:, t])
         self.last_spike[spiking_neurons] = t
 
         if self.verbose:
@@ -220,7 +220,7 @@ class Izhikevich:
         :type verbose: Boolean
         :return:
         """
-        print("The Izhikevich model hasn't been tested yet -- use with care")
+        print("The Izhikevich model implementation hasn't been tested yet -- use with care")
         self.a = a * np.ones((neurons, 1))
         self.b = b * np.ones((neurons, 1))
         self.c = c * np.ones((neurons, 1))
