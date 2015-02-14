@@ -1,3 +1,4 @@
+$(document).ready(function () {
 /*! jQuery UI - v1.11.3 - 2015-02-14
 * http://jqueryui.com
 * Includes: core.js, widget.js, mouse.js, slider.js
@@ -1746,3 +1747,5 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
 
 
 }));
+
+});
