@@ -33,8 +33,19 @@ class SRM:
         self.verbose = verbose
         self.last_spike = np.ones(self.neurons, dtype=float) * -1000000
 
-    def eta(self, spikes):
-        return - self.eta_reset*np.exp(-spikes/self.t_membrane)
+    def eta(self, s):
+        r"""
+        Evaluate the Eta function:
+
+        .. math:: \eta (s) = - \eta_{reset} * \exp(\frac{- s}{\tau_m})
+            :label: eta
+
+        :param s: Time s
+        :return: Function eta(s) at time s
+        :return type: Float or Vector of Floats
+        """
+
+        return - self.eta_reset*np.exp(-s/self.t_membrane)
 
     @functools.lru_cache()
     def eps(self, s):
