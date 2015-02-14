@@ -32,7 +32,6 @@ class SRM:
         self.simulation_window_size = simulation_window_size
         self.verbose = verbose
         self.last_spike = np.ones(self.neurons, dtype=float) * -1000000
-        self.v_plot = np.empty((neurons, 0))
 
     def eta(self, spikes):
         return - self.eta_reset*np.exp(-spikes/self.t_membrane)
@@ -141,8 +140,6 @@ class SRM:
             print("Total potential", total_potential)
             print("Last spike", self.last_spike)
             print("")
-
-        self.v_plot = np.hstack((self.v_plot, total_potential.reshape(neurons, 1)))
 
         return total_potential
 
