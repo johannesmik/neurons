@@ -1,4 +1,4 @@
-$(document).ready(function () {
+jQuery(document).ready(function($){
 
     function epsilon(s, t_current, t_membrane) {
         return (1 / (1 - t_current / t_membrane)) * (Math.exp(-s/t_membrane) - Math.exp(-s/t_current));
