@@ -34,10 +34,10 @@ The SRM (Spike-response model) is a model for neurons. New spikes are generated 
 
 .. code-block:: python
 
-    model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5)
+    model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, eta_reset=5)
 
 This sets up a model of *3 neurons*. A neuron generates a new spike if it exceeds the threshold of 1mV. The variables
-t_current, t_membrane are time constants used in the SRM model, and nu_reset resets the membrane potential after a spike (repolarization).
+t_current, t_membrane are time constants used in the SRM model, and eta_reset resets the membrane potential after a spike (repolarization).
 
 .. note::
     We can say here, that the values are not 'realistic.' This is because our SRM implementation assumes a resting potential
@@ -141,7 +141,7 @@ Here you can see the whole source code for our little SRM network:
     import numpy as np
     from neurons import spiking
 
-    model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, nu_reset=5)
+    model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, eta_reset=5)
 
     weights = np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
 
