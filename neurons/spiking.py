@@ -8,7 +8,7 @@ class SRM:
     """ SRM_0 (Spike Response Model) """
     def __init__(self, neurons, threshold, t_current, t_membrane, eta_reset, simulation_window_size=100, verbose=False):
         """
-        Neurons can have different t_current, t_membrane and eta_resets: Set those variables to 1D np.arrays of all the same size.
+        Neurons can have different threshold, t_current, t_membrane and eta_resets: Set those variables to 1D np.arrays of all the same size.
 
         :param neurons: Number of neurons
         :param threshold: Spiking threshold
@@ -22,7 +22,20 @@ class SRM:
         """
 
         # Check user input
-        # TODO
+        try: neurons = int(neurons)
+        except: raise ValueError("Variable neurons should be int or convertible to int")
+
+        # threshold, t_current, t_membrane, and eta_reset are all vector
+        threshold = np.array(threshold)
+        t_current = np.array(t_current)
+        t_membrane = np.array(t_membrane)
+        eta_reset = np.array(eta_reset)
+
+        if not(threshold.shape == t_current.shape == t_membrane.shape == eta_reset.shape):
+            raise ValueError("Vector of threshhold, t_current, t_membrane, and eta_reset must be same size")
+
+        try: simulation_window_size = int(simulation_window_size)
+        except: raise ValueError("Variable simulation_window_size should be int or convertible to int")
 
         self.neurons = neurons
         self.threshold = threshold
