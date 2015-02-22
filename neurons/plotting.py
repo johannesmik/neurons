@@ -220,6 +220,28 @@ class CurrentsHeatmapAnimation(HeatmapAnimation):
         self.values.append(currents.copy())
 
 class CurrentPlot:
+    """
+    A plot of the current of neurons.
+
+    Create the plot by adding the values of the currents at one timestep with `CurrentPlot,add(values)`.
+
+    .. image:: _images/current_plot.png
+        :alt: PSTH Plot
+        :width: 400px
+
+    **Example**
+
+    The image above was created by following code:
+
+    ::
+        c = CurrentPlot(3)
+        c.add(np.array([1, 5, 4]))
+        c.add(np.array([2, 4, 4]))
+        c.add(np.array([3, 5, 4]))
+        c.add(np.array([4, 3, 4]))
+        c.show_plot()
+        plt.show()
+    """
 
     def __init__(self, neurons):
         self.values = np.empty((0, neurons))
@@ -241,6 +263,22 @@ class CurrentPlot:
 
         plt.show(block=False)
         self.fig = fig
+
+    def save_plot(self, filename='plot.png'):
+        """
+        Saves the plot.
+
+        :param filename: Name of the file. Default: 'plot.png'
+        :type filename: String
+
+        """
+
+        if not self.fig:
+            self.show_plot()
+
+        plt.figure(self.fig.number)
+        plt.savefig(filename)
+        print('saved current plot as %s' % filename)
 
 def show():
     plt.show()
