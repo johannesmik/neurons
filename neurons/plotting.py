@@ -233,9 +233,11 @@ class CurrentPlot:
         self.values = np.append(self.values, currents.copy(), axis=0)
 
     def show_plot(self):
+        datapoints, neurons = self.values.shape
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.plot(self.values)
+        ax.legend(['Neuron % i' % i for i in range(neurons)])
 
         plt.show(block=False)
         self.fig = fig
@@ -247,5 +249,7 @@ if __name__ == '__main__':
     c = CurrentPlot(3)
     c.add(np.array([1, 5, 4]))
     c.add(np.array([2, 4, 4]))
+    c.add(np.array([3, 5, 4]))
+    c.add(np.array([4, 3, 4]))
     c.show_plot()
     plt.show()
