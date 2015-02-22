@@ -20,7 +20,7 @@ class TestVarious:
 
         # Empty spiketrain of length 'timesteps'
         spiketrain = np.zeros((2, timesteps), dtype=bool)
-        current = spiking_model.simulate(spiketrain, weights, 19)
+        current = spiking_model.check_spikes(spiketrain, weights, 19)
 
         # The outcoming current on both neurons should be zero
         assert np.array_equal(current, np.array([0, 0]))
@@ -41,7 +41,7 @@ class TestVarious:
         # Neuron 1 Spikes all the time :)
         spiketrain[0,:] = 1
 
-        current = spiking_model.simulate(spiketrain, weights, 19)
+        current = spiking_model.check_spikes(spiketrain, weights, 19)
 
         # The outcoming current on Neuron 1 should be 0
         # on Neuron 2 it should be negative
@@ -63,7 +63,7 @@ class TestVarious:
         # Neuron 1 Spikes all the time :)
         spiketrain[0,:] = 1
 
-        current = spiking_model.simulate(spiketrain, weights, 19)
+        current = spiking_model.check_spikes(spiketrain, weights, 19)
 
         # The outcoming current on Neuron 1 should be 0
         # on Neuron 2 it should be positive
@@ -88,7 +88,7 @@ class TestShouldFail:
         weights = np.array([[0, 1], [0, 0]], dtype=bool)
 
         with pytest.raises(ValueError) as e:
-            current = spiking_model.simulate(spiketrain1, weights, 20)
+            current = spiking_model.check_spikes(spiketrain1, weights, 20)
         assert "Spiketrain too short (0ms -- 19ms) for simulating time 20" in str(e.value)
 
     def test_simulate_wrong_types(self):
@@ -100,15 +100,15 @@ class TestShouldFail:
 
         # Spiketrain is not a numpy array
         with pytest.raises(ValueError) as e:
-            current = spiking_model.simulate([0,0,0], weights, 20)
+            current = spiking_model.check_spikes([0,0,0], weights, 20)
 
         # Weights is not a matrix
         with pytest.raises(ValueError) as e:
-            current = spiking_model.simulate(spiketrain1, [[0,1],[0,0]], 20)
+            current = spiking_model.check_spikes(spiketrain1, [[0,1],[0,0]], 20)
 
         # Time is not a int
         with pytest.raises(ValueError) as e:
-            current = spiking_model.simulate(spiketrain1, weights, [20, 13])
+            current = spiking_model.check_spikes(spiketrain1, weights, [20, 13])
         assert "Variable t should be int or convertible to int" in str(e.value)
 
     def test_wrong_weight_size(self):
@@ -121,7 +121,7 @@ class TestShouldFail:
         weights = np.array([[0, 1], [0, 0], [0, 0]], dtype=bool)
 
         with pytest.raises(ValueError) as e:
-            current = spiking_model.simulate(spiketrain1, weights, 20)
+            current = spiking_model.check_spikes(spiketrain1, weights, 20)
         assert "Weigths should be a quadratic matrix" in str(e.value)
 
     def test_wrong_time_too_small(self):
@@ -134,7 +134,7 @@ class TestShouldFail:
         weights = np.array([[0, 1], [0, 0]], dtype=bool)
 
         with pytest.raises(ValueError) as e:
-            current = spiking_model.simulate(spiketrain1, weights, -1)
+            current = spiking_model.check_spikes(spiketrain1, weights, -1)
         assert "Time to be simulated is too small" in str(e.value)
 
     def test_wrong_number_of_constants(self):

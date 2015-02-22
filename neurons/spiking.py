@@ -104,7 +104,7 @@ class SRM:
 
         return matrix
 
-    def simulate(self, spiketrain, weights, t):
+    def check_spikes(self, spiketrain, weights, t):
         """
         Simulate one time step at time t. Changes the spiketrain in place at time t!
         Return the total membrane potential of all neurons.
@@ -246,7 +246,7 @@ class Izhikevich:
         self.u = self.b*self.v
         self.v_plot = np.empty((neurons, 0))
 
-    def simulate(self, spikes, weights, t):
+    def check_spikes(self, spikes, weights, t):
         # Input
         # TODO: is this correct, or should I use another variable instead threshold?
         I = self.threshold * spikes[:, t]
