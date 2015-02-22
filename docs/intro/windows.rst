@@ -17,7 +17,7 @@ Open a terminal (Shortcut: `Windows + R`). Change into the directory you just un
 
 ::
 
-    $ cd neurons-master
+    $ cd neurons-0.4
     $ python3 setup.py install --user
 
 .. note::

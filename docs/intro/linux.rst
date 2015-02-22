@@ -18,7 +18,7 @@ Change into the directory, and run the install script
 
 ::
 
-    $ cd neurons-master
+    $ cd neurons-0.4
     $ python3 setup.py install --user
 
 .. note::

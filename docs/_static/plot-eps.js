@@ -1,5 +1,3 @@
-window.onload = function() {
-
     function epsilon(s, t_current, t_membrane) {
         return (1 / (1 - t_current / t_membrane)) * (Math.exp(-s/t_membrane) - Math.exp(-s/t_current));
       } 
@@ -28,8 +26,8 @@ window.onload = function() {
           context.moveTo(margin, 140);
           context.lineTo(width - margin, 140);
           context.fillText("eps(s)", 280, 25);
-          context.fillText("t-current:" + String(t_current), 280, 40);
-          context.fillText("t-membrane:" + String(t_membrane), 280, 55);
+          context.fillText("t-current: " + String(t_current), 280, 40);
+          context.fillText("t-membrane: " + String(t_membrane), 280, 55);
 
           // Coordinate system ticks
           context.moveTo(5, 10);
@@ -75,4 +73,3 @@ window.onload = function() {
         $( "#membrane-slider" ).slider("value", 200);
 
       });
-}

@@ -55,7 +55,7 @@ First, we import all required modules.
     import numpy as np
     import matplotlib.pyplot as plt
 
-    from neurons import learning, spiking, plotting
+    from neurons import spiking, plotting
 
 Now we define how many neurons we have and how many timesteps we want to simulate:
 
@@ -64,7 +64,7 @@ Now we define how many neurons we have and how many timesteps we want to simulat
     neurons = 11
     timesteps = 100
 
-In the `ax_delays` variable we define the delays in the epsilon function:
+In the `ax_delays` variable we define the delays in the epsilon function (First neuron 0ms, second neuron 5ms and so on):
 
 
 .. code-block:: python
@@ -148,3 +148,52 @@ References
 .. [JEF1948] Jeffress L A, 1948, A place theory of sound localization," J Comp Physiol Psychol 41, 35-39.
 
 .. [SP2011] Scholarpedia `<Jeffress Model http://www.scholarpedia.org/article/Jeffress_model>`_
+
+
+Source Code
+-----------
+
+Here you can see the whole source code for our Jeffress example:
+
+.. code-block:: python
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    from neurons import spiking, plotting
+
+    neurons = 11
+    timesteps = 100
+
+    ax_delays = np.array([0, 5, 15, 25, 0, 25, 15, 5, 0, 0, 0])
+
+    threshold = np.array([1]*neurons)
+    t_current = np.array([5]*neurons)
+    t_membrane = np.array([10]*neurons)
+    eta_reset = np.array([2]*neurons)
+
+    model = spiking.SRM_X(neurons=neurons, threshold=threshold, t_current=t_current,
+                          t_membrane=t_membrane, eta_reset=eta_reset, ax_delay=ax_delays)
+
+    weights = np.zeros((neurons, neurons))
+
+    # Connect input layer
+    weights[0, (1, 2, 3)] = 1
+    weights[4, (5, 6, 7)] = 1
+
+    # Connect to output layer
+    weights[(1, 5), 8] = 1.1
+    weights[(2, 6), 9] = 1.1
+    weights[(3, 7), 10] = 1.1
+
+    spiketrain = np.zeros((neurons, timesteps), dtype=bool)
+
+    spiketrain[0, (0, 5, 10)] = 1
+    spiketrain[4, (20, 25, 30)] = 1
+
+    for t in range(timesteps):
+        model.simulate(spiketrain, weights, t)
+
+    psth = plotting.PSTH(spiketrain, binsize=5)
+    psth.show_plot(neuron_indices=[8, 9, 10])
+    plt.show()

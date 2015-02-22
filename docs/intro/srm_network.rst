@@ -97,9 +97,9 @@ We prepared the SRM neurons, a spiketrain, and the inter-neural weights, so we a
 .. code-block:: python
 
     for time in range(10):
-        total_potential = model.simulate(spiketrain, weights, time)
+        total_potential = model.check_spikes(spiketrain, weights, time)
 
-Simulate(spiketrain, weights, time) calculates the membrane potential at a time t. It checks if any spikes occurred, and accordingly changes the spiketrain array in-place.
+check_spikes(spiketrain, weights, time) calculates the membrane potential at a time t. It checks if any spikes occurred, and accordingly changes the spiketrain array in-place.
 
 In the for-loop we calculate the membrane potential (and if exceeding the threshold generating new spikes) for every time from 0ms -- 9ms.
 
@@ -150,7 +150,7 @@ Here you can see the whole source code for our little SRM network:
                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
 
     for time in range(10):
-        total_potential = model.simulate(spiketrain, weights, time)
+        total_potential = model.check_spikes(spiketrain, weights, time)
 
     print("Spiketrain:")
     print(spiketrain)
@@ -158,4 +158,12 @@ Here you can see the whole source code for our little SRM network:
 Questions
 ---------
 
-Why don't we define the weights at the initialization, but at every call of spiking?
+Q: Why don't we define the weights at the initialization, but at every call of spiking?
+
+A: Because the weights can change during the simulation (for example by STDP learning). So it is better to overgive the
+current weights at each call of check_spikes().
+
+Q: How do we come up with the parameters for our model?
+
+A: Honestly, we just invented them to fit for this example. Of course, if you want to use the model for real-world
+applications, you have to choose the parameters more sensibly.
