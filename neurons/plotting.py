@@ -1,3 +1,7 @@
+"""
+This module contains functions to create nice plots.
+"""
+
 __author__ = 'johannes'
 
 import numpy as np
@@ -154,14 +158,20 @@ class WeightHeatmapAnimation(HeatmapAnimation):
     """
     Show an animation of the weights (as a heatmap).
 
-    :Example:
+    .. raw:: html
+
+        <iframe width="420" height="315" src="https://www.youtube.com/embed/R35L-m5Gxuw" frameborder="0" allowfullscreen></iframe>
+
+    **Example**
+
+    The video above was created by following code:
 
     ::
 
         w = WeightHeatmapAnimation()
         for i in range(300):
             w.add(np.array([[i/300, 1], [1, 3]]))
-        w.plot_weights()
+        w.show_animation()
         plt.show()
 
     """
@@ -180,7 +190,7 @@ class WeightHeatmapAnimation(HeatmapAnimation):
         Add weights to the end of animation.
 
         :param weights: The weight matrix to be shown.
-        :type weights: Symmetric Numpy array
+        :type weights: Numpy array
         :return: None
         """
         self.values.append(weights.copy())
@@ -188,7 +198,13 @@ class WeightHeatmapAnimation(HeatmapAnimation):
 
 class CurrentsHeatmapAnimation(HeatmapAnimation):
     """
-    :Example:
+    .. raw:: html
+
+        <iframe width="560" height="150" src="https://www.youtube.com/embed/3vUZG_3eQ_I" frameborder="0" allowfullscreen></iframe>
+
+    **Example**
+
+    The video above was created by following code:
 
     ::
 
@@ -234,6 +250,7 @@ class CurrentPlot:
     The image above was created by following code:
 
     ::
+
         c = CurrentPlot(3)
         c.add(np.array([1, 5, 4]))
         c.add(np.array([2, 4, 4]))
@@ -241,6 +258,7 @@ class CurrentPlot:
         c.add(np.array([4, 3, 4]))
         c.show_plot()
         plt.show()
+
     """
 
     def __init__(self, neurons):
@@ -284,10 +302,4 @@ def show():
     plt.show()
 
 if __name__ == '__main__':
-    c = CurrentPlot(3)
-    c.add(np.array([1, 5, 4]))
-    c.add(np.array([2, 4, 4]))
-    c.add(np.array([3, 5, 4]))
-    c.add(np.array([4, 3, 4]))
-    c.show_plot()
-    plt.show()
+    pass
