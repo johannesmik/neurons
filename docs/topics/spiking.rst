@@ -43,9 +43,6 @@ We approximate it like this (x-axis: time, y-axis: potential):
         margin: 15px;
       }
     </style>
-    <script src="../_static/jquery1.10.2.js"></script>
-    <script src="../_static/jquery-ui.js"></script>
-    <script src="../_static/plot-eta.js"></script>
 
 Epsilon function
 ~~~~~~~~~~~~~~~~
@@ -84,7 +81,6 @@ When plotted, it looks like this (x-axis: time, y-axis: potential):
         margin: 15px;
       }
     </style>
-    <script src="../_static/plot-eps.js"></script>
 
 Linearization
 ~~~~~~~~~~~~~

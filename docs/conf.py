@@ -253,3 +253,8 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+def setup(app):
+    app.add_javascript('jquery-ui.js')
+    app.add_javascript('plot-eps.js')
+    app.add_javascript('plot-eta.js')
