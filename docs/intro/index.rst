@@ -9,4 +9,6 @@ Get started using the installation guides and the tutorials.
     linux
     windows
     srm_network
+    learn
+    spike_and_learn
     visualizing

@@ -1,7 +1,7 @@
 Jeffress Model
 ==============
 
-In this article we want to show that it is possible to model the Jeffress Model [JEF1948]_ using an extended SRM model.
+In this article we want to show that it is possible to model the Jeffress Model [JEF1948]_ [SP2011]_ using an extended SRM model.
 
 Adapting the SRM model
 ----------------------
@@ -140,7 +140,7 @@ Extending the Network
 
 Of course this was only a toy example with 3 output neurons. In a future article we want to show a more complex network.
 
-The distribution of the delays and the correct mechanism of generating a delay is still a topic of active discussions. [SP2011]
+The distribution of the delays and the correct mechanism of generating a delay is still a topic of active discussions. [SP2011]_
 
 References
 ----------

@@ -66,10 +66,13 @@ Therefore, we define a suitable Numpy array:
 
 .. code-block:: python
 
-    weights = np.array([[0, 0, 1],
-                        [0, 0, 1],
+    weights = np.array([[0, 0, 1.],
+                        [0, 0, 1.],
                         [0, 0, 0]])
 
+.. note::
+    The weight array should be a float array. So get sure to write at least one float entry (like '1.') or
+    create it using np.array([....], dtype=float).
 
 Preparing a spiketrain
 ----------------------
@@ -129,7 +132,7 @@ Conclusion
 
 As you see it didn't take much to simulate our first SRM network: just under 10 lines of Python code.
 
-In the next section we'll see how we can visualize our results.
+In the next part of the tutorial section we'll see how we can :doc:`learn the parameters based on the STDP model <learn>`.
 
 Sourcecode
 ----------
@@ -143,7 +146,7 @@ Here you can see the whole source code for our little SRM network:
 
     model = spiking.SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, eta_reset=5)
 
-    weights = np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
+    weights = np.array([[0, 0, 1.], [0, 0, 1.], [0, 0, 0]])
 
     spiketrain = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
                            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],

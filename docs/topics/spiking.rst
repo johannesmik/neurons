@@ -101,7 +101,7 @@ Where
 
  * :math:`W^T` the transposed Weight matrix
  * :math:`S` is the Spiketrain previous to time :math:`t` in binary notation
- * :math:`\mathcal{E}_n` is a helper matrix :math:`\begin{pmatrix} \epsilon_1(t) & \epsilon_1(t) & \dots & \epsilon_1(0) \\ \colon & & & \colon \\ \epsilon_n(t) & \epsilon_n(t) & \dots & \epsilon_n(0) \end{pmatrix}`
+ * :math:`\mathcal{E}_t` is a helper matrix :math:`\begin{pmatrix} \epsilon_1(t) & \epsilon_1(t-1) & \dots & \epsilon_1(0) \\ \colon & & & \colon \\ \epsilon_n(t) & \epsilon_n(t-1) & \dots & \epsilon_n(0) \end{pmatrix}`
  * :math:`\epsilon_i(s)` is the epsilon function for neuron i at time s
  * :math:`Z(t) = \begin{pmatrix}\eta(t - \hat{t}_1 & \dots & \eta(t - \hat{t}_n \end{pmatrix}^T`
  * :math:`\circ` is element-wise product
@@ -112,6 +112,13 @@ To understand this equation better, let's have a look at it's components:
  1. :math:`W^T \cdot S` is a :math:`n \times t` matrix, that says us how many weighted spikes arrive at a neuron at each time
  2. :math:`rowsum((W^T \cdot S) \circ \mathcal{E}_t)` is a :math:`n`-dimensional vector, that gives us the membrane potential of a neuron caused by incoming spikes
  3. :math:`Z(t) + \dots` in the last step we add the after-potential of each neuron
+
+
+You can find those dot-products implemented in `spiking.py`:
+
+.. literalinclude:: spiking.py
+   :start-after: # Calculate current
+   :end-before: # Calculate current end
 
 .. note::
 
