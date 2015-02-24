@@ -12,7 +12,6 @@ It originated from a student project at the `Chair for Theoretical Biophysics at
 
 .. _Chair for Theoretical Biophysics at TU München: http://www.t35.physik.tu-muenchen.de/
 
-
 First steps
 -----------
 
@@ -64,6 +63,10 @@ Used open-source projects:
     `numpy <http://numpy.org/>`_ |
     `matplotlib <http://matplotlib.org/>`_ |
     `sphinx <http://sphinx-doc.org/>`_
+
+.. image:: cover_image.png
+    :alt: A neurons simulation tool -- using SRM0 and STDP
+    :width: 400px
 
 
 .. toctree::
