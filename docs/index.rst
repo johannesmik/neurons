@@ -24,6 +24,8 @@ Read this if you are new to the project.
 
 * **Tutorials:**
     :doc:`Your first SRM network <intro/srm_network>` |
+    :doc:`Learning the weights <intro/learn>` |
+    :doc:`Combining spiking and learning <intro/spike_and_learn>` |
     :doc:`Visualizing the network <intro/visualizing>`
 
 * **Topics:**
