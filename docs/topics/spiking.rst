@@ -82,7 +82,7 @@ When plotted, it looks like this (x-axis: time, y-axis: potential):
       }
     </style>
 
-Linearization
+Vectorization
 ~~~~~~~~~~~~~
 
 Because we wanted to have a fast implementation of our model, we rewrote the original SRM equation :eq:`srm` as

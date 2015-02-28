@@ -9,13 +9,14 @@ There are two input neurons with predefined spikes, and they will excite one out
 What do neurons do?
 -------------------
 
-Simply said, neurons send out short peaks of current, called *spikes*, and collect spikes from other neurons.
+Simply said, neurons send out short peaks of membrane potential, called *spikes*, and collect spikes from other neurons.
 
 A neuron sends out spikes on it's *axon* and it collects the spikes from other neurons using it's many *dendrites*.
-The axon is connected to the dendrites by a *synapse*, which transmits the spike chemically. Not every synapse transmits
-the spike equally good (depending on many factors), some strengthen . We will call this effect the *weight* of a synapse.
+The axon is connected to the dendrites by *synapses*, which transmit the spike predominantly chemically. Not every synapse transmits
+the spike equally good (depending on many factors), some strengthen, some weaken the potential.
+We will call this effect the *weight* of a synapse.
 
-Later we will see that neural networks can *learn*. This is mainly because of the different synaptic weights!
+Later we will see that neural networks can *learn*. This is because of the different synaptic weights!
 
 Importing the needed libraries
 ------------------------------
@@ -71,13 +72,13 @@ Therefore, we define a suitable Numpy array:
                         [0, 0, 0]])
 
 .. note::
-    The weight array should be a float array. So get sure to write at least one float entry (like '1.') or
+    The weight array should be a float array. So make sure to write at least one float entry (like '1.') or
     create it using np.array([....], dtype=float).
 
 Preparing a spiketrain
 ----------------------
 
-Without any initial spikes, our model wouldn't do nothing!
+Without any initial spikes, our model would do nothing!
 
 So let's define some spikes for our neurons:
 
@@ -85,7 +86,7 @@ So let's define some spikes for our neurons:
 
     spiketrain = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
                            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+                           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype=bool)
 
 This matrix means that the first neuron spikes at times of 2ms, 6ms and 7ms, and that the second neuron spikes at
 times of 0ms, 6ms and 7ms.
@@ -150,7 +151,7 @@ Here you can see the whole source code for our little SRM network:
 
     spiketrain = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
                            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+                           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype=bool)
 
     for time in range(10):
         total_potential = model.check_spikes(spiketrain, weights, time)
@@ -163,7 +164,7 @@ Questions
 
 Q: Why don't we define the weights at the initialization, but at every call of spiking?
 
-A: Because the weights can change during the simulation (for example by STDP learning). So it is better to overgive the
+A: Because the weights can change during the simulation (for example by STDP learning). So it is better to pass the
 current weights at each call of check_spikes().
 
 Q: How do we come up with the parameters for our model?

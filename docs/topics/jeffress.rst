@@ -147,7 +147,7 @@ References
 
 .. [JEF1948] Jeffress L A, 1948, A place theory of sound localization," J Comp Physiol Psychol 41, 35-39.
 
-.. [SP2011] Scholarpedia `<Jeffress Model http://www.scholarpedia.org/article/Jeffress_model>`_
+.. [SP2011] Scholarpedia `Jeffress Model <http://www.scholarpedia.org/article/Jeffress_model>`_
 
 
 Source Code

@@ -60,7 +60,7 @@ of the last tutorial:
 
     spiketrain = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
                            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
-                           [0, 0, 0, 1, 0, 0, 0, 0, 1, 0]])
+                           [0, 0, 0, 1, 0, 0, 0, 0, 1, 0]], dtype=bool)
 
 Now we are ready to go!
 
@@ -103,7 +103,7 @@ What do you think happens when we use the following spiketrain?
 
     spiketrain = np.array([[0, 0, 1, 0, 0, 0, 0, 0, 1, 1],
                            [1, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-                           [0, 1, 0, 0, 0, 0, 0, 1, 0, 0]])
+                           [0, 1, 0, 0, 0, 0, 0, 1, 0, 0]], dtype=bool)
 
 Do the weights:
 
@@ -137,7 +137,7 @@ The complete source code is as follows:
 
     spiketrain = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
                            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
-                           [0, 0, 0, 1, 0, 0, 0, 0, 1, 0]])
+                           [0, 0, 0, 1, 0, 0, 0, 0, 1, 0]], dtype=bool)
 
     for time in range(10):
         stdp_model.weight_change(spiketrain, weights, time)

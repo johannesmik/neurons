@@ -14,7 +14,7 @@ As in the last two tutorials, we
  - set up the initial spiketrain and weights (lines 8 & 10).
 
 .. code-block:: python
-    :lineos:
+    :linenos:
 
     import numpy as np
     from neurons import spiking, learning
@@ -27,7 +27,7 @@ As in the last two tutorials, we
 
     spiketrain = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
                            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+                           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype=bool)
 
 Simulate
 --------
@@ -36,7 +36,7 @@ The simulation is again similar. But now we calculate in each timestep first the
 the weight change (line 3):
 
 .. code-block:: python
-    :lineos:
+    :linenos:
 
     for time in range(10):
         srm_model.check_spikes(spiketrain, weights, time)
