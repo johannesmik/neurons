@@ -149,6 +149,7 @@ class SRM:
         incoming_spikes = np.dot(weights.T, spiketrain_window)
         incoming_potential = np.sum(incoming_spikes * epsilon_matrix, axis=1)
         total_potential = self.eta(np.ones(neurons)*t - self.last_spike) + incoming_potential
+        # Calculate current end
 
         # Any new spikes?
         neurons_high_current = np.where(total_potential > self.threshold)

@@ -170,7 +170,7 @@ class WeightHeatmapAnimation(HeatmapAnimation):
 
         w = WeightHeatmapAnimation()
         for i in range(300):
-            w.add(np.array([[i/300, 1], [1, 3]]))
+            w.add(np.array([[i/300, 1], [1, (300 - i) / 300]]))
         w.show_animation()
         plt.show()
 
