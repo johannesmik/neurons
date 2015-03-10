@@ -64,7 +64,6 @@ class PSTH:
         fig, axes = plt.subplots(nrows=n_plots)
         plt.title("Peri Stimulus Time Histogram")
 
-        print(type(axes))
 
         if not isinstance(axes, np.ndarray):
             axes = [axes]
@@ -73,7 +72,8 @@ class PSTH:
             neuron_index = neuron_indices[i]
             # Histogramm
             times = np.where(self.spiketrain[neuron_index])[0]
-            axis.hist(times, bins, histtype='bar', stacked=True, fill=True, facecolor='green', alpha=0.5, zorder=0)
+            if len(times) >= 1:
+                axis.hist(times, bins, histtype='bar', stacked=True, fill=True, facecolor='green', alpha=0.5, zorder=0)
 
             # Scatter (Spikes)
             y = np.ones(times.shape)
