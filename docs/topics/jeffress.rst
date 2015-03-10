@@ -113,7 +113,7 @@ It's time to simulate our model:
 .. code-block:: python
 
     for t in range(timesteps):
-        model.simulate(spiketrain, weights, t)
+        model.check_spikes(spiketrain, weights, t)
 
 As always, we want to see our result, and we use a PSTH diagram for this reason:
 
@@ -192,7 +192,7 @@ Here you can see the whole source code for our Jeffress example:
     spiketrain[4, (20, 25, 30)] = 1
 
     for t in range(timesteps):
-        model.simulate(spiketrain, weights, t)
+        model.check_spikes(spiketrain, weights, t)
 
     psth = plotting.PSTH(spiketrain, binsize=5)
     psth.show_plot(neuron_indices=[8, 9, 10])
