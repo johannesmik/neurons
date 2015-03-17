@@ -5,6 +5,7 @@ In this test we create a bigger Jeffress model.
  - The axonal delay between the input neurons and the inter-layer neurons are sampled from 0ms to 100ms.
  - We create the same spiketrain with 50 ms difference between the two input neurons.
 
+Over several test runs, we adjust the weight which with the inter-layer is connected to the output layer.
 One can see that the better the weights are adjusted, the more precise the outcome of the net is.
 """
 
