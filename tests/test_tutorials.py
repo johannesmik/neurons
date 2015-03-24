@@ -75,10 +75,10 @@ class TestSpikeAndLearn:
         # Output that I got during my first run. There's a possibility that this is wrong calculations.
         expected_spiketrain = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
                                         [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
-                                        [0, 0, 0, 1, 0, 0, 0, 0, 1, 1]], dtype=bool)
-
-        expected_weights = np.array([[0, 0, 1.28884081],
-                                     [0, 0, 1.28063985],
+                                        [0, 0, 0, 1, 0, 0, 0, 0, 1, 0]], dtype=bool)
+        print(weights)
+        expected_weights = np.array([[0, 0, 1.18586337],
+                                     [0, 0, 1.17766241],
                                      [0, 0, 0]])
 
         assert np.array_equal(spiketrain, expected_spiketrain)

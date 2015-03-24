@@ -64,18 +64,16 @@ Which gives us:
     Final Spiketrain:
     [[0 0 1 0 0 0 1 1 0 0]
      [1 0 0 0 0 0 1 1 0 0]
-     [0 0 0 1 0 0 0 0 1 1]]
+     [0 0 0 1 0 0 0 0 1 0]]
     Final weights:
-    [[ 0.          0.          1.28884081]
-     [ 0.          0.          1.28063985]
+    [[ 0.          0.          1.18586337]
+     [ 0.          0.          1.17766241]
      [ 0.          0.          0.        ]]
 
-Notice, that the result is slightly different to our previous results:
+We get the exact same spiketrain and weights as in the previous two tutorials.
 
-First, neuron 3 also spikes at time 10 now, because when checking for new spikes at time 10 the weights have been
-bigger, and thus forcing the neuron to spike another time.
-
-Second, the weights have gone up slightly more, because neuron 3 spikes also at time 10.
+However, it could be that the results are different when we run `check_spikes()` and `weight_change()` at the same time
+rather than one after another. The learned weights can influence the check_spikes and produce more or less spikes!
 
 Conclusion
 ----------
