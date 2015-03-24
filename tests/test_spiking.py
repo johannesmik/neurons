@@ -70,6 +70,41 @@ class TestVarious:
         assert current[0] == 0
         assert current[1] > 0
 
+    def test_potential_cross_from_below(self):
+
+        ''' Tests if there is only a spike if the potential hits the threshold from below '''
+
+        threshold = 1.0
+        timesteps = 20
+        spiking_model = spiking.SRM(neurons=2, threshold=threshold, t_current=0.3,
+                                    t_membrane=20, eta_reset=5, verbose=False)
+
+        weights = np.array([[0, 1], [0, 0]])
+
+        # Empty spiketrain of length 'timesteps'
+        spiketrain = np.zeros((2, timesteps), dtype=bool)
+        # Neuron 1 Spikes all the time :)
+        spiketrain[0,:] = 1
+
+        current = []
+        for t in range(timesteps):
+            current.append(spiking_model.check_spikes(spiketrain, weights, t))
+
+
+        # Potential of 2nd neurons is over the threshold at the last timestep, but does not spike
+        assert current[19][1] >= threshold
+        assert not spiketrain[1, 19]
+
+        # More elaborated assertions:
+        for t in range(timesteps):
+            if spiketrain[1, t]:
+                assert current[t-1][1] < threshold
+                assert current[t][1] >= threshold
+            else:
+                assert current[t][1] < threshold or (t >= 1 and current[t-1][1] >= threshold)
+
+
+
     def test_different_time_constants(self):
         # Each neuron has different time constants
         pass
