@@ -103,6 +103,28 @@ class TestVarious:
             else:
                 assert current[t][1] < threshold or (t >= 1 and current[t-1][1] >= threshold)
 
+    def test_rerun_spike_check(self):
+        ''' If we rerun spikecheck with the same time, we should get the same results '''
+
+        rerun_time = 15
+
+        timesteps = 20
+        spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,
+                                    t_membrane=20, eta_reset=5, verbose=False)
+        weights = np.array([[0, 1], [0, 0]])
+
+        # Neuron 1 Spikes at 0 and 5 ms
+        spiketrain = np.zeros((2, timesteps), dtype=bool)
+        spiketrain[0,(0, 5)] = True
+
+        # Run for the first time
+        current = []
+        for t in range(timesteps):
+            current.append(spiking_model.check_spikes(spiketrain, weights, t))
+
+        current_rerun = spiking_model.check_spikes(spiketrain, weights, rerun_time - 1)
+
+        assert np.array_equal(current[rerun_time - 1] - current_rerun, np.array([0, 0]))
 
 
     def test_different_time_constants(self):
