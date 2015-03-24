@@ -44,7 +44,9 @@ class SRM:
         self.eta_reset = eta_reset
         self.simulation_window_size = simulation_window_size
         self.verbose = verbose
-        self.last_spike = np.ones(self.neurons, dtype=float) * -1000000
+        self.cache = {}
+        self.cache['last_t'] = -1
+        self.cache['last_spike'] = np.ones(self.neurons, dtype=float) * -1000000
 
     def eta(self, s):
         r"""
@@ -141,6 +143,12 @@ class SRM:
         # Work on a windowed view
         spiketrain_window = spiketrain[:, max(0, t+1-self.simulation_window_size):t+1]
 
+        # Retrieve necessary simulation data from cache if possible
+        if self.cache['last_t'] == -1 or self.cache['last_t'] == t - 1:
+            last_spike = self.cache['last_spike']
+        else:
+            last_spike = t - np.argmax(spiketrain_window[:, ::-1], axis=1)
+
         neurons, timesteps = spiketrain_window.shape
 
         epsilon_matrix = self.eps_matrix(min(self.simulation_window_size, t), timesteps)
@@ -148,22 +156,23 @@ class SRM:
         # Calculate current
         incoming_spikes = np.dot(weights.T, spiketrain_window)
         incoming_potential = np.sum(incoming_spikes * epsilon_matrix, axis=1)
-        total_potential = self.eta(np.ones(neurons)*t - self.last_spike) + incoming_potential
+        total_potential = self.eta(np.ones(neurons)*t - last_spike) + incoming_potential
         # Calculate current end
 
         # Any new spikes?
         neurons_high_current = np.where(total_potential > self.threshold)
         spiketrain[neurons_high_current, t] = True
 
-        # Update last_spike
+        # Update cache (last_spike and last_t)
         spiking_neurons = np.where(spiketrain[:, t])
-        self.last_spike[spiking_neurons] = t
+        self.cache['last_spike'][spiking_neurons] = t
+        self.cache['last_t'] = t
 
         if self.verbose:
             print("SRM Time step", t)
             print("Incoming current", incoming_potential)
             print("Total potential", total_potential)
-            print("Last spike", self.last_spike)
+            print("Last spike", last_spike)
             print("")
 
         return total_potential
