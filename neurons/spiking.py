@@ -47,6 +47,7 @@ class SRM:
         self.cache = {}
         self.cache['last_t'] = -1
         self.cache['last_spike'] = np.ones(self.neurons, dtype=float) * -1000000
+        self.cache['last_potential'] = np.zeros(self.neurons, dtype=float)
 
     def eta(self, s):
         r"""
@@ -146,8 +147,11 @@ class SRM:
         # Retrieve necessary simulation data from cache if possible
         if self.cache['last_t'] == -1 or self.cache['last_t'] == t - 1:
             last_spike = self.cache['last_spike']
+            last_potential = self.cache['last_potential']
         else:
             last_spike = t - np.argmax(spiketrain_window[:, ::-1], axis=1)
+            # TODO find a way to calculate last_potential (recursive call to check_spikes is not a good option)
+            last_potential = np.zeros(self.neurons)
 
         neurons, timesteps = spiketrain_window.shape
 
@@ -159,13 +163,14 @@ class SRM:
         total_potential = self.eta(np.ones(neurons)*t - last_spike) + incoming_potential
         # Calculate current end
 
-        # Any new spikes?
-        neurons_high_current = np.where(total_potential > self.threshold)
+        # Any new spikes? Only spike if potential hits the threshold from below.
+        neurons_high_current = np.where((total_potential > self.threshold) & (last_potential < self.threshold))
         spiketrain[neurons_high_current, t] = True
 
-        # Update cache (last_spike and last_t)
+        # Update cache (last_spike, last_potential and last_t)
         spiking_neurons = np.where(spiketrain[:, t])
         self.cache['last_spike'][spiking_neurons] = t
+        self.cache['last_potential'] = total_potential
         self.cache['last_t'] = t
 
         if self.verbose:
@@ -306,6 +311,6 @@ if __name__ == "__main__":
         neurons, timesteps = s.shape
 
         for t in range(timesteps):
-            total_current = model.simulate(s, w, t)
+            total_current = model.check_spikes(s, w, t)
             print("Spiketrain:")
             print(s)
