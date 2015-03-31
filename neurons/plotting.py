@@ -7,6 +7,7 @@ __author__ = 'johannes'
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
 
@@ -190,6 +191,44 @@ class HintonPlot(object):
         ax.invert_yaxis()
         plt.show(block=False)
 
+
+class Histogram3DPlot(object):
+
+    """
+    .. image:: _images/threed_histogram_plot.png
+        :alt: Histogram 3D Plot
+        :width: 400px
+
+    **Example**
+
+    The image above was created by following code:
+
+    ::
+
+        hist = Histogram3DPlot(np.random.random((5, 5)))
+        plt.show()
+    """
+
+    def __init__(self, matrix, xlimits=None, ylimits=None, width_factor=0.9, alpha=1.0, color='#00ceaa', ax=None):
+
+        fig = plt.figure()
+        ax1 = fig.add_subplot(111, projection='3d')
+
+        xlimits = xlimits if xlimits is not None else (0, 1)
+        ylimits = ylimits if ylimits is not None else (0, 1)
+        xsize, ysize = matrix.shape
+
+        xpos, ypos = np.meshgrid(np.linspace(xlimits[0], xlimits[1], xsize), np.linspace(ylimits[0], ylimits[1], ysize))
+        xpos = xpos.flatten()
+        ypos = ypos.flatten()
+        zpos = np.zeros(xsize * ysize)
+
+        dx = width_factor * (abs(xlimits[0] - xlimits[1]) / xsize) * np.ones(xsize * ysize)
+        dy = width_factor * (abs(ylimits[0] - ylimits[1]) / ysize) * np.ones(xsize * ysize)
+        dz = matrix.flatten()
+
+        ax1.bar3d(xpos, ypos, zpos, dx, dy, dz, color=color, alpha=alpha)
+        plt.show(block=False)
 
 class WeightHeatmapAnimation(HeatmapAnimation):
     """
