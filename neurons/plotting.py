@@ -169,7 +169,6 @@ class HintonPlot(object):
 
             http://matplotlib.org/examples/specialty_plots/hinton_demo.html
         """
-        print(weights)
         ax = ax if ax is not None else plt.gca()
 
         if not max_weight:
