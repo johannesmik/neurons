@@ -303,3 +303,6 @@ def show():
 
 if __name__ == '__main__':
     pass
+    weights = np.random.random((20, 20))
+    hinton_plot = HintonPlot(weights)
+    show()
