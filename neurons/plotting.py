@@ -209,7 +209,7 @@ class Histogram3DPlot(object):
         plt.show()
     """
 
-    def __init__(self, matrix, xlimits=None, ylimits=None, width_factor=0.9, alpha=1.0, ax=None):
+    def __init__(self, matrix, xlimits=None, ylimits=None, width_factor=0.9, alpha=1.0, color='#00ceaa', ax=None):
 
         fig = plt.figure()
         ax1 = fig.add_subplot(111, projection='3d')
@@ -227,7 +227,7 @@ class Histogram3DPlot(object):
         dy = width_factor * (abs(ylimits[0] - ylimits[1]) / ysize) * np.ones(xsize * ysize)
         dz = matrix.flatten()
 
-        ax1.bar3d(xpos, ypos, zpos, dx, dy, dz, color='#00ceaa', alpha=alpha)
+        ax1.bar3d(xpos, ypos, zpos, dx, dy, dz, color=color, alpha=alpha)
         plt.show(block=False)
 
 class WeightHeatmapAnimation(HeatmapAnimation):
