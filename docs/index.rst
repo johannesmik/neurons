@@ -8,7 +8,7 @@ Welcome to Neurons' documentation!
 It currently supports the **SRM** model for calculating spike trains,
 and the **STDP** model for learning synaptic weights.
 
-It originated from a student project at the `Chair for Theoretical Biophysics at TU München`_ in summer term 2014.
+It's the documentation of a student project at the `Chair for Theoretical Biophysics at TU München`_ in summer term 2014.
 
 .. _Chair for Theoretical Biophysics at TU München: http://www.t35.physik.tu-muenchen.de/
 
