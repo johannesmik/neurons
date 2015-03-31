@@ -195,9 +195,18 @@ class HintonPlot(object):
 class Histogram3DPlot(object):
 
     """
-     #TODO: Documentation string
-     hist = Histogram3DPlot(np.random.random((5, 5)))
+    .. image:: _images/threed_histogram_plot.png
+        :alt: Histogram 3D Plot
+        :width: 400px
 
+    **Example**
+
+    The image above was created by following code:
+
+    ::
+
+        hist = Histogram3DPlot(np.random.random((5, 5)))
+        plt.show()
     """
 
     def __init__(self, matrix, xlimits=None, ylimits=None, width_factor=0.9, alpha=1.0, ax=None):
@@ -369,4 +378,5 @@ def show():
     plt.show()
 
 if __name__ == '__main__':
-    pass
+    hist = Histogram3DPlot(np.random.random((5, 5)))
+    show()
