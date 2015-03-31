@@ -378,5 +378,4 @@ def show():
     plt.show()
 
 if __name__ == '__main__':
-    hist = Histogram3DPlot(np.random.random((5, 5)))
-    show()
+    pass
