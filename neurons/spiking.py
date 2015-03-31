@@ -227,81 +227,16 @@ class SRM_X(SRM):
         eps[np.where(eps<0)] = 0
         return eps
 
-class Izhikevich:
-    """
-     Izhikevich model
-
-     http://www.izhikevich.org/publications/spikes.htm
-    """
-    # TODO this model looks wrong, because we receive far to less output spikes!
-    def __init__(self, neurons, a, b, c, d, v0=-65, threshold=30, verbose=False):
-        """
-
-        :param neurons: total number of neurons
-        :param a: decay rate
-        :param b: sensitivity
-        :param c: reset
-        :param d: reset
-        :param v0: Initial voltage
-        :param threshold:
-        :param verbose: Verbose output to console. Default: False.
-        :type verbose: Boolean
-        :return:
-        """
-        print("The Izhikevich model implementation hasn't been tested yet -- use with care")
-        self.a = a * np.ones((neurons, 1))
-        self.b = b * np.ones((neurons, 1))
-        self.c = c * np.ones((neurons, 1))
-        self.d = d * np.ones((neurons, 1))
-        self.threshold = threshold
-        self.verbose = verbose
-
-        # Initial u and v
-        self.v = v0 * np.ones((neurons, 1))
-        self.u = self.b*self.v
-        self.v_plot = np.empty((neurons, 0))
-
-    def check_spikes(self, spikes, weights, t):
-        # Input
-        # TODO: is this correct, or should I use another variable instead threshold?
-        I = self.threshold * spikes[:, t]
-        I = I[:, np.newaxis]
-        fired = np.nonzero(self.v >= self.threshold)[0]  # Indices of neurons that spike
-        print(fired)
-        t = np.array([t+0*fired, fired])
-        spikes[fired, t] = True
-        self.v_plot = np.hstack((self.v_plot, self.v))
-
-        self.v[fired] = self.c[fired]
-        self.u[fired] = self.u[fired] + self.d[fired]
-
-        I = I + np.sum(weights[fired, :], axis=0, keepdims=True)
-        self.v = self.v + 0.5 * (0.04 * self.v ** 2 + 5 * self.v + 140 - self.u + I)  # step 0.5 ms
-        self.v = self.v + 0.5 * (0.04 * self.v ** 2 + 5 * self.v + 140 - self.u + I)  # for numerical
-        self.u = self.u + self.a * (np.multiply(self.b, self.v) - self.u)             # stability
-
-        if self.verbose:
-            print("Izhikevich Time step", t)
-            print("Total current", self.v)
-            print("Fired: ", fired)
-            print("")
-
-        return self.v
-
-
 if __name__ == "__main__":
 
     srm_model = SRM(neurons=3, threshold=1, t_current=0.3, t_membrane=20, eta_reset=5, verbose=True)
-    izhikevich_model = Izhikevich(neurons=3, a=0.02, b=0.2, c=-65, d=8, threshold=30, verbose=True)
 
-    models = [srm_model, izhikevich_model]
+    models = [srm_model]
 
     for model in models:
         print("-"*10)
         if isinstance(model, SRM):
             print('Demonstration of the SRM Model')
-        elif isinstance(model, Izhikevich):
-            print('Demonstration of the Izhikevich Model')
 
         s = np.array([[0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
                       [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
