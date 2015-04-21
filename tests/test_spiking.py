@@ -181,6 +181,20 @@ class TestShouldFail:
             current = spiking_model.check_spikes(spiketrain1, weights, 20)
         assert "Weigths should be a quadratic matrix" in str(e.value)
 
+    def test_wrong_additional_term_size(self):
+        spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,
+                                    t_membrane=20, eta_reset=5, verbose=False)
+
+        spiketrain1 = np.zeros((2, 21))
+
+        # Wrong weights
+        weights = np.array([[0, 1], [0, 0]], dtype=bool)
+        additional_term = np.array([1, 2, 3])
+
+        with pytest.raises(ValueError) as e:
+            current = spiking_model.check_spikes(spiketrain1, weights, 20, additional_term=additional_term)
+        assert "Additional_term should be a vector with one element for each neuron" in str(e.value)
+
     def test_wrong_time_too_small(self):
         # Simulate a time that is too small
         spiking_model = spiking.SRM(neurons=2, threshold=1.0, t_current=0.3,

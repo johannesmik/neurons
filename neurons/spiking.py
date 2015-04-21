@@ -107,7 +107,7 @@ class SRM:
 
         return matrix
 
-    def check_spikes(self, spiketrain, weights, t):
+    def check_spikes(self, spiketrain, weights, t, additional_term=None):
         """
         Simulate one time step at time t. Changes the spiketrain in place at time t!
         Return the total membrane potential of all neurons.
@@ -115,6 +115,7 @@ class SRM:
         :param spiketrain: Spiketrain (Time indexing begins with 0)
         :param weights: Weights
         :param t: Evaluation time
+        :param additional_term: Additional potential that gets added before we check for spikes (For example for extern voltage)
         :return: total membrane potential of all neurons at time step t (vector), spikes at time t
         """
 
@@ -125,6 +126,9 @@ class SRM:
 
         if type(weights) != np.ndarray:
             raise ValueError("Weights should be a numpy matrix")
+
+        if additional_term != None and type(additional_term) != np.ndarray:
+            raise ValueError("Additional_term should be a numpy array")
 
         try: t = int(t)
         except: raise ValueError("Variable t should be int or convertible to int")
@@ -140,6 +144,9 @@ class SRM:
 
         if spiketrain.shape[0] != self.neurons:
             raise ValueError("Spikes should be a matrix, with one row for each neuron")
+
+        if additional_term != None and (additional_term.shape[0] != self.neurons or len(additional_term.shape) != 1):
+            raise ValueError("Additional_term should be a vector with one element for each neuron")
 
         # Work on a windowed view
         spiketrain_window = spiketrain[:, max(0, t+1-self.simulation_window_size):t+1]
@@ -162,6 +169,10 @@ class SRM:
         incoming_potential = np.sum(incoming_spikes * epsilon_matrix, axis=1)
         total_potential = self.eta(np.ones(neurons)*t - last_spike) + incoming_potential
         # Calculate current end
+
+        # Add additional term (user-defined)
+        if additional_term != None:
+            total_potential += additional_term
 
         # Any new spikes? Only spike if potential hits the threshold from below.
         neurons_high_current = np.where((total_potential > self.threshold) & (last_potential < self.threshold))
