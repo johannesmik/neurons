@@ -145,7 +145,10 @@ class SRM:
         if spiketrain.shape[0] != self.neurons:
             raise ValueError("Spikes should be a matrix, with one row for each neuron")
 
-        if additional_term != None and (additional_term.shape[0] != self.neurons or len(additional_term.shape) != 1):
+        if additional_term != None and additional_term.shape[0] != self.neurons:
+            raise ValueError("Additional_term should be a vector with one element for each neuron")
+
+        if additional_term != None and len(additional_term) == 2 and additional_term.shape[1] != 1:
             raise ValueError("Additional_term should be a vector with one element for each neuron")
 
         # Work on a windowed view
