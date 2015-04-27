@@ -108,6 +108,96 @@ class PSTH:
         plt.savefig(filename)
         print('saved psth plot as %s' % filename)
 
+class SpikePlot:
+    """
+    Most Simple SpikePlot
+
+    .. image:: _images/spike_plot.png
+        :alt: SpikePlot
+        :width: 400px
+
+    **Example**
+
+    The image above was created by following code:
+
+    ::
+
+        spikes = np.random.randint(0, 2, size=(10, 200))
+        a = SpikePlot(spikes)
+        a.show_plot(neuron_indices=[1,2,6])
+        a.save_plot()
+        plt.show()
+
+    """
+    def __init__(self, spiketrain):
+        """
+        Initialize the Spike plot with a spiketrain
+
+        :param spiketrain: The spiketrain to be plotted
+        :type spiketrain: Numpy array
+        :return: None
+        """
+        self.spiketrain = spiketrain
+        self.fig = None
+
+    def show_plot(self, neuron_indices=None):
+        """
+        Shows the Spike plot.
+
+        :param neuron_indices: The indices of the neurons to be plotted
+        :type neuron_indices: List or Tuple
+        """
+        neurons, timesteps = self.spiketrain.shape
+
+        if not neuron_indices:
+            print("Plotting all neurons!!")
+            neuron_indices = range(neurons)
+
+        n_plots = len(neuron_indices)  # Number of subplots
+
+        fig = plt.figure()
+        plt.title("SpikePlot")
+
+
+        for i in range(len(neuron_indices)):
+            print(i)
+            neuron_index = neuron_indices[i]
+
+            times = np.where(self.spiketrain[neuron_index])[0]
+
+            # Scatter (Spikes)
+            y = i * np.ones(times.shape)
+            plt.scatter(times, y, c='r', s=40, marker="|", zorder=1)
+
+            plt.xlim(0, timesteps)
+
+        plt.ylabel('Neuron')
+        plt.yticks(range(len(neuron_indices)), neuron_indices)
+
+        plt.tight_layout()
+        plt.show(block=False)
+
+        self.fig = fig
+
+    def save_plot(self, filename=None):
+        """
+        Saves the plot.
+
+        :param filename: Name of the file. Default: 'plot.png'
+        :type filename: String
+
+        """
+
+        if not self.fig:
+            self.show_plot()
+
+        if not filename:
+            filename = 'plot.png'
+
+        plt.figure(self.fig.number)
+        plt.savefig(filename)
+        print('saved psth plot as %s' % filename)
+
 
 class HeatmapAnimation:
     def __init__(self, fps=30):
