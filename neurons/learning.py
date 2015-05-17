@@ -11,11 +11,22 @@ class STDP:
     Spike Timing Dependent Plasticity
     """
 
-    def __init__(self, eta, w_in, w_out, tau, window_size, verbose=False):
+    def __init__(self, eta, w_in, w_out, tau, window_size, verbose=False, tau2=None):
+        """
+        :param eta: learning rate
+        :param w_in:
+        :param w_out:
+        :param tau: The tau parameter for the learning window. If you want an unsymmetric window, then also set tau2.
+        :param window_size:
+        :param verbose: Verbose output of the weight change.
+        :param tau2: If learning window is unsymmetric, then tau2 is the tau parameter for x-values GREATER than 0. If not given, it defaults to tau.
+        :return:
+        """
         self.eta = eta
         self.w_in = w_in
         self.w_out = w_out
         self.tau = tau
+        self.tau2 = tau2 if tau2 else tau
         self.window_size = window_size  # T_l
         self.verbose = verbose
 
@@ -51,7 +62,7 @@ class STDP:
         :return:
         """
         if x > 0:
-            return - np.exp(-x / self.tau)
+            return - np.exp(-x / self.tau2)
         elif x < 0:
             return np.exp(x / self.tau)
         else:
