@@ -8,6 +8,8 @@ Welcome to Neurons' documentation!
 It currently supports the **SRM** model for calculating spike trains,
 and the **STDP** model for learning synaptic weights.
 
+Internally, it is based on Numpy's matrix operations.
+
 It's the documentation of a student project at the `Chair for Theoretical Biophysics at TU München`_ in summer term 2014.
 
 .. _Chair for Theoretical Biophysics at TU München: http://www.t35.physik.tu-muenchen.de/
@@ -63,11 +65,6 @@ Used open-source projects:
     `numpy <http://numpy.org/>`_ |
     `matplotlib <http://matplotlib.org/>`_ |
     `sphinx <http://sphinx-doc.org/>`_
-
-.. image:: cover_image.png
-    :alt: A neurons simulation tool -- using SRM0 and STDP
-    :width: 400px
-
 
 .. toctree::
     :hidden:

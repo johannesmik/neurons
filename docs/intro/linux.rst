@@ -16,9 +16,9 @@ Next, download and unzip the `newest release <https://github.com/johannesmik/neu
 
 Change into the directory, and run the install script
 
-::
+.. parsed-literal::
 
-    $ cd neurons-0.4
+    $ cd neurons-|version|
     $ python3 setup.py install --user
 
 .. note::
